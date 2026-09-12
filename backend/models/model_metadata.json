@@ -1,0 +1,32 @@
+{
+  "model_version": "2.0-candidate",
+  "trained_at": "2026-09-09T20:52:33.774164+00:00",
+  "dataset": "UCI SMS Spam Collection",
+  "dataset_file": "/mnt/d/projects/ScamShield/spam_production.csv",
+  "original_rows": 5574,
+  "clean_rows": 5158,
+  "duplicates_removed": 411,
+  "training_rows": 4126,
+  "testing_rows": 1032,
+  "model": "LogisticRegression",
+  "vectorizer": "TfidfVectorizer",
+  "ngram_range": [
+    1,
+    2
+  ],
+  "max_features": 50000,
+  "accuracy": 0.982558,
+  "precision": 0.923077,
+  "recall": 0.9375,
+  "f1": 0.930233,
+  "confusion_matrix": [
+    [
+      894,
+      10
+    ],
+    [
+      8,
+      120
+    ]
+  ]
+}

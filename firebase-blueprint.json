@@ -1,0 +1,63 @@
+{
+  "entities": {
+    "users": {
+      "title": "User",
+      "description": "User account profiles",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "role": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email"]
+    },
+    "scans": {
+      "title": "Scan Record",
+      "description": "Scam audit logs and forensic reports",
+      "type": "object",
+      "properties": {
+        "content": { "type": "string" },
+        "aiResult": { "type": "string" },
+        "category": { "type": "string" },
+        "status": { "type": "string" },
+        "userId": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["content", "category", "status"]
+    },
+    "scam_alerts": {
+      "title": "Scam Alert",
+      "description": "Community reported scam zone alerts",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "scamType": { "type": "string" },
+        "description": { "type": "string" },
+        "areaName": { "type": "string" },
+        "lat": { "type": "number" },
+        "lng": { "type": "number" },
+        "severity": { "type": "string" },
+        "reportedBy": { "type": "string" },
+        "upvotes": { "type": "number" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["title", "scamType", "description", "areaName", "lat", "lng"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "users",
+      "description": "User profile documents"
+    },
+    "/scans/{scanId}": {
+      "schema": "scans",
+      "description": "Scam scan and analysis records"
+    },
+    "/scam_alerts/{alertId}": {
+      "schema": "scam_alerts",
+      "description": "Publicly reported active scam alerts"
+    }
+  }
+}

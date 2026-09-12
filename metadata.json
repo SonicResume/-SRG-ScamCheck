@@ -1,0 +1,10 @@
+{
+  "name": "SRG ScamCheck ",
+  "description": "A high-end cybersecurity platform to protect users from scams using Gemini AI analysis, UPI checking, and voice deepfake detection.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

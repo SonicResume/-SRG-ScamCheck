@@ -1,0 +1,104 @@
+[
+  {
+    "input_data": "la la la la",
+    "original_label": "Safe",
+    "user_label": "Safe",
+    "type": "voice"
+  },
+  {
+    "input_data": "la la la la",
+    "original_label": "Safe",
+    "user_label": "Suspicious",
+    "type": "voice"
+  },
+  {
+    "input_data": "la la la la",
+    "original_label": "Safe",
+    "user_label": "Scam",
+    "type": "voice"
+  },
+  {
+    "input_data": "hello hello hello",
+    "original_label": "Safe",
+    "user_label": "Safe",
+    "type": "voice",
+    "timestamp": "2026-09-09T22:02:52.272505+00:00"
+  },
+  {
+    "input_data": "hello hello hello",
+    "original_label": "Safe",
+    "user_label": "Safe",
+    "type": "voice",
+    "timestamp": "2026-09-09T22:02:54.761676+00:00"
+  },
+  {
+    "input_data": "hello hello hello",
+    "original_label": "Safe",
+    "user_label": "Safe",
+    "type": "voice",
+    "timestamp": "2026-09-09T22:02:55.365720+00:00"
+  },
+  {
+    "input_data": "hello hello hello",
+    "original_label": "Safe",
+    "user_label": "Safe",
+    "type": "voice",
+    "timestamp": "2026-09-09T22:02:55.813083+00:00"
+  },
+  {
+    "input_data": "hello hello hello",
+    "original_label": "Safe",
+    "user_label": "Safe",
+    "type": "voice",
+    "timestamp": "2026-09-09T22:02:56.054118+00:00"
+  },
+  {
+    "input_data": "hello hello hello",
+    "original_label": "Safe",
+    "user_label": "Safe",
+    "type": "voice",
+    "timestamp": "2026-09-09T22:02:56.271146+00:00"
+  },
+  {
+    "input_data": "hello hello hello",
+    "original_label": "Safe",
+    "user_label": "Safe",
+    "type": "voice",
+    "timestamp": "2026-09-09T22:02:56.469285+00:00"
+  },
+  {
+    "input_data": "hello hello hello",
+    "original_label": "Safe",
+    "user_label": "Safe",
+    "type": "voice",
+    "timestamp": "2026-09-09T22:02:56.672053+00:00"
+  },
+  {
+    "input_data": "hello hello hello",
+    "original_label": "Safe",
+    "user_label": "Safe",
+    "type": "voice",
+    "timestamp": "2026-09-09T22:02:57.258743+00:00"
+  },
+  {
+    "input_data": "hello hello hello",
+    "original_label": "Safe",
+    "user_label": "Safe",
+    "type": "voice",
+    "timestamp": "2026-09-09T22:02:57.718772+00:00"
+  },
+  {
+    "input_data": "hello hello hello",
+    "original_label": "Safe",
+    "user_label": "Safe",
+    "type": "voice",
+    "timestamp": "2026-09-09T22:02:58.107790+00:00"
+  },
+  {
+    "input_data": "hello hello hello",
+    "original_label": "Safe",
+    "user_label": "Safe",
+    "type": "voice",
+    "timestamp": "2026-09-09T22:02:58.769979+00:00"
+  }
+]
