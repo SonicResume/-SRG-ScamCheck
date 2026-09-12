@@ -1,0 +1,99 @@
+# -SRG-ScamCheck — Proprietary Commercial License
+
+Copyright (c) 2026. All Rights Reserved.
+
+## 1. Ownership
+
+The -SRG-ScamCheck software, source code, application design, documentation, interfaces, assets, and other materials contained in this repository ("Software") are proprietary intellectual property.
+
+All rights not expressly granted in this License are reserved.
+
+## 2. Limited License
+
+You may view and evaluate the Software for personal, educational, research, or evaluation purposes.
+
+No commercial rights are granted under this License.
+
+You may not sell, sublicense, distribute, publish, commercially use, or create derivative works from the Software without prior written permission.
+
+## 3. Commercial Use
+
+Commercial use of the Software requires prior written permission and a separate commercial license or commercial agreement.
+
+Commercial use includes, but is not limited to:
+
+* selling the Software or modified versions;
+* incorporating the Software into a paid product or service;
+* providing the Software as a paid SaaS or hosted service;
+* using the Software to provide paid services to third parties;
+* sublicensing or licensing the Software;
+* redistributing the Software as part of a commercial product;
+* using the Software to generate revenue directly or indirectly.
+
+## 4. Restrictions
+
+Without prior written permission, you may not:
+
+* sell, rent, lease, sublicense, or distribute the Software;
+* publish or redistribute copies of the Software;
+* create or distribute derivative works based on the Software;
+* incorporate substantial portions of the Software into another product;
+* use the Software to develop a competing commercial product;
+* remove or alter proprietary notices;
+* claim ownership of the Software.
+
+## 5. Public Repository
+
+The availability of this repository on GitHub does not make the Software open source and does not grant commercial rights.
+
+Any rights provided by GitHub's platform or its Terms of Service remain separate from the rights granted under this License.
+
+## 6. Third-Party Software
+
+The Software may contain or depend upon third-party software, libraries, frameworks, models, datasets, APIs, or other materials.
+
+Third-party materials remain subject to their respective licenses and terms.
+
+Nothing in this License grants rights to third-party intellectual property that is not owned by the Software's rights holder.
+
+## 7. Trademarks and Branding
+
+The name "-SRG-ScamCheck", associated branding, logos, product names, and other trademarks or service marks are not licensed under this License unless expressly authorized in writing.
+
+## 8. Contributions
+
+Contributions submitted to this repository must not contain material that the contributor does not have the right to submit.
+
+Unless a separate written agreement states otherwise, accepted contributions may be incorporated into the Software and distributed or commercialized under applicable terms determined by the rights holder.
+
+## 9. No Warranty
+
+THE SOFTWARE IS PROVIDED "AS IS" AND "AS AVAILABLE", TO THE MAXIMUM EXTENT PERMITTED BY LAW.
+
+NO WARRANTIES, EXPRESS OR IMPLIED, ARE PROVIDED, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, OR NON-INFRINGEMENT, EXCEPT WHERE SUCH DISCLAIMERS ARE PROHIBITED BY LAW.
+
+## 10. Limitation of Liability
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE RIGHTS HOLDER SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, EXEMPLARY, OR PUNITIVE DAMAGES ARISING FROM OR RELATED TO THE USE OF THE SOFTWARE.
+
+## 11. Termination
+
+Any rights granted under this License terminate automatically if you violate its terms.
+
+Upon termination, you must stop using, copying, distributing, or commercially exploiting the Software to the extent required by applicable law.
+
+## 12. Commercial Licensing
+
+Commercial licensing, enterprise licensing, partnerships, distribution rights, and other commercial permissions require a separate written agreement.
+
+Additional rights may be granted under such an agreement, including rights to use, modify, deploy, distribute, sublicense, or commercially exploit the Software.
+
+## 13. Reservation of Rights
+
+All copyright, patent, trademark, trade secret, and other intellectual property rights are reserved.
+
+No rights are granted by implication, estoppel, or otherwise except those expressly stated in this License.
+
+---
+
+All Rights Reserved.
