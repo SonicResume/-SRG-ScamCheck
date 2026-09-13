@@ -28,14 +28,32 @@ MAX_TEXT_LENGTH = 10000
 MAX_URL_LENGTH = 2048
 
 WHISPER_MODEL_SIZE = os.getenv("WHISPER_MODEL_SIZE", "small")
-WHISPER_DEVICE = os.getenv("WHISPER_DEVICE", "cuda")
-WHISPER_COMPUTE_TYPE = os.getenv("WHISPER_COMPUTE_TYPE", "float16")
 
-transcriber = WhisperModel(
-    WHISPER_MODEL_SIZE,
-    device=WHISPER_DEVICE,
-    compute_type=WHISPER_COMPUTE_TYPE,
-)
+# Render does not have a compatible CUDA driver for this service.
+# Use CPU/int8 by default; local GPU deployments can override these.
+WHISPER_DEVICE = os.getenv("WHISPER_DEVICE", "cpu")
+WHISPER_COMPUTE_TYPE = os.getenv("WHISPER_COMPUTE_TYPE", "int8")
+
+try:
+    transcriber = WhisperModel(
+        WHISPER_MODEL_SIZE,
+        device=WHISPER_DEVICE,
+        compute_type=WHISPER_COMPUTE_TYPE,
+    )
+except RuntimeError as exc:
+    if "CUDA" not in str(exc).upper():
+        raise
+
+    print(
+        f"Whisper CUDA unavailable; falling back to CPU/int8: {exc}",
+        flush=True,
+    )
+
+    transcriber = WhisperModel(
+        WHISPER_MODEL_SIZE,
+        device="cpu",
+        compute_type="int8",
+    )
 
 VIDEO_EXTENSIONS = {".mp4", ".mov", ".mkv", ".webm"}
 
@@ -76,8 +94,6 @@ def transcribe_audio(path):
         "language": info.language,
         "language_probability": round(float(info.language_probability), 4),
     }
-
-
 
 # ============================================================
 # APP
