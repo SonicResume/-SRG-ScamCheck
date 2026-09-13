@@ -151,6 +151,29 @@ function App() {
   const [currentUser, setCurrentUser] = useState(auth.currentUser);
   const [authLoading, setAuthLoading] = useState(true);
 
+  const [history, setHistory] = useState<any[]>(() => {
+    try {
+      const saved = localStorage.getItem("scamshield_history");
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const handleHistoryResult = (item: any) => {
+    const record = {
+      ...item,
+      id: item?.id || crypto.randomUUID(),
+      timestamp: item?.timestamp || Date.now(),
+    };
+
+    setHistory((prev) => {
+      const next = [record, ...prev];
+      localStorage.setItem("scamshield_history", JSON.stringify(next));
+      return next;
+    });
+  };
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
@@ -328,7 +351,7 @@ function App() {
           return <DashboardContent />;
 
         case "scanner":
-          return <ScamScanner />;
+          return <ScamScanner onResult={handleHistoryResult} />;
 
         case "upi":
           return <UPIChecker />;
@@ -340,10 +363,10 @@ function App() {
           return <GhostFirmVerifier />;
 
         case "voice":
-          return <VoiceAudit />;
+          return <VoiceAudit onResult={handleHistoryResult} />;
 
         case "history":
-          return <History />;
+          return <History history={history} />;
 
         case "profile":
   	  return (
@@ -359,7 +382,7 @@ function App() {
                    }
                  : undefined
              }
-             historyCount={0}
+             historyCount={history.length}
              onSignOut={handleLogout}
              onUpdateUser={handleUpdateUser}
            />

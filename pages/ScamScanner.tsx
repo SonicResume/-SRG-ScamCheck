@@ -47,7 +47,8 @@ const ScamScanner: React.FC<ScamScannerProps> = ({ onResult }) => {
             type: 'scam',
             target: selectedFile?.name,
             isScam: analysis.isScam,
-            riskScore: analysis.riskScore
+            riskScore: analysis.riskScore,
+            report: analysis
           });
         }
       } else {
@@ -94,7 +95,8 @@ const ScamScanner: React.FC<ScamScannerProps> = ({ onResult }) => {
             type: 'scam',
             target: textInput.substring(0, 30) + '...',
             isScam: analysis.isScam,
-            riskScore: analysis.riskScore
+            riskScore: analysis.riskScore,
+            report: analysis
           });
         }
       }
@@ -116,7 +118,7 @@ const ScamScanner: React.FC<ScamScannerProps> = ({ onResult }) => {
     doc.setFontSize(22);
     
     if (scamResult) {
-      doc.text('SCAMSHIELD: FORENSIC BRAIN REPORT', 10, 20);
+      doc.text('SRG-SCAMCHECK: FORENSIC REPORT', 10, 20);
       doc.setTextColor(15, 23, 42);
       doc.setFontSize(12);
       doc.text(`Result: ${scamResult.isScam ? 'POSITIVE SCAM DETECTION' : 'NEGATIVE / CLEAN'}`, 10, 40);
@@ -138,9 +140,9 @@ const ScamScanner: React.FC<ScamScannerProps> = ({ onResult }) => {
       <div className="bg-gradient-to-br from-[#ffffff] via-[#faf7f0] to-[#f4f0e6] border border-[#e2ddd0] p-8 rounded-3xl text-center relative overflow-hidden shadow-xs">
         <div className="relative z-10">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#f0ece1] border border-[#dcd7c8] text-indigo-950 rounded-full text-xs font-mono font-black uppercase tracking-widest mb-4">
-             <Zap size={14} className="text-indigo-800" /> BEHAVIORAL INTELLIGENCE
+             <Zap size={14} className="text-indigo-800" /> credential/OTP harvesting
           </div>
-          <h3 className="text-3xl font-black text-slate-950 mb-2 italic tracking-tight uppercase">THREAT <span className="text-indigo-800"> INTELLIGENCE </span></h3>
+          <h3 className="text-3xl font-black text-slate-950 mb-2 italic tracking-tight uppercase">SCAM <span className="text-indigo-800"> SCANNER </span></h3>
           <p className="text-slate-700 mb-8 max-w-xl mx-auto font-bold">Analyze suspicious messages and websites. Our Multimodal Engine detects pressure tactics, deception, and hidden threats in seconds.</p>
           
           <div className="flex flex-wrap justify-center gap-3 mb-8">
@@ -148,13 +150,13 @@ const ScamScanner: React.FC<ScamScannerProps> = ({ onResult }) => {
               onClick={() => {setScanMode('image'); setScamResult(null);}}
               className={`px-5 py-2.5 rounded-xl border font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 ${scanMode === 'image' ? 'bg-[#ffffff] border-indigo-700 text-indigo-950 shadow-2xs' : 'bg-[#f0ece1] border-[#dcd7c8] text-slate-800 hover:bg-[#eae5d7]'}`}
             >
-              <Eye size={16} className="text-indigo-800" /> SCREENSHOT
+              <Eye size={16} className="text-indigo-800" /> IMAGE
             </button>
             <button 
               onClick={() => {setScanMode('text'); setScamResult(null);}}
               className={`px-5 py-2.5 rounded-xl border font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 ${scanMode === 'text' ? 'bg-[#ffffff] border-indigo-700 text-indigo-950 shadow-2xs' : 'bg-[#f0ece1] border-[#dcd7c8] text-slate-800 hover:bg-[#eae5d7]'}`}
             >
-              <MessageSquareCode size={16} className="text-teal-800" /> PASTE TEXT
+              <MessageSquareCode size={16} className="text-teal-800" /> TEXT
             </button>
           </div>
 
@@ -168,7 +170,7 @@ const ScamScanner: React.FC<ScamScannerProps> = ({ onResult }) => {
                         <Upload size={28} />
                       </div>
                       <p className="text-lg text-slate-950 font-black mb-1">Upload </p>
-                      <p className="text-xs text-slate-600 font-mono tracking-wider uppercase font-extrabold">WhatsApp • Telegram • SMS • Email</p>
+                      <p className="text-xs text-slate-600 font-mono tracking-wider uppercase font-extrabold">Email • SMS • Telegram • WhatsApp</p>
                     </div>
                   </div>
                   <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />

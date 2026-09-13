@@ -66,7 +66,7 @@ const VoiceAudit: React.FC<VoiceAuditProps> = ({ onResult }) => {
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file && file.type.startsWith('audio/')) {
+    if (file && (file.type.startsWith('audio/') || file.type.startsWith('video/'))) {
       setSelectedFile(file);
       setAudioUrl(URL.createObjectURL(file));
       setResult(null);
@@ -328,7 +328,7 @@ const VoiceAudit: React.FC<VoiceAuditProps> = ({ onResult }) => {
                   <Upload size={28} />
                 </div>
                 <span className="text-xs font-black uppercase tracking-wider text-slate-950">Upload Voice Recording</span>
-                <input type="file" ref={fileInputRef} className="hidden" accept="audio/*" onChange={handleFileChange} />
+                <input type="file" ref={fileInputRef} className="hidden" accept="audio/*,video/*" onChange={handleFileChange} />
               </button>
             </div>
           )}
