@@ -77,7 +77,7 @@ app.get("/health", (req, res) => {
   });
 });
 
-app.post("/api/analyze", upload.single("audio"), async (req, res) => {
+app.post(["/api/analyze", "/api/analyze-audio"], upload.single("audio"), async (req, res) => {
   try {
     // -------------------------
     // AUDIO
