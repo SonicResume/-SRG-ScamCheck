@@ -96,7 +96,7 @@ app.post("/api/analyze", upload.single("audio"), async (req, res) => {
       }
 
       const voiceEndpoint =
-        `${VOICE_API_URL.replace(/\\/$/, "")}/api/analyze-audio`;
+        `${VOICE_API_URL.replace(/\/$/, "")}/api/analyze-audio`;
 
       console.log("Forwarding audio to:", voiceEndpoint);
 
