@@ -1,10 +1,18 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import multer from "multer";
 
 dotenv.config();
 
 const app = express();
+
+app.get("/test", (req, res) => {
+  res.status(200).json({
+    status: "SRG ScamCheck backend is live 🚀"
+  });
+});
+
 
 // =========================
 // CONFIG
@@ -13,11 +21,22 @@ const PORT = process.env.PORT || 5000;
 const OLLAMA_API_URL = process.env.OLLAMA_API_URL;
 const OLLAMA_MODEL =
   process.env.OLLAMA_MODEL ||
-  "pdurugyan/qwen3.5-9b-deepseek-v4-flash-Q4_K_M:latest";
+  "theo:latest";
+
+const OLLAMA_VISION_MODEL =
+  process.env.OLLAMA_VISION_MODEL ||
+  "qwen3-vl:8b";
 
 if (!OLLAMA_API_URL) {
   console.warn("⚠️ OLLAMA_API_URL is not configured");
 }
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 25 * 1024 * 1024
+  }
+});
 
 // =========================
 // SECURITY + MIDDLEWARE
@@ -51,17 +70,29 @@ app.get("/health", (req, res) => {
   });
 });
 
-app.get("/test", (req, res) => {
-  res.status(200).json({
-    status: "SRG ScamCheck backend is live 🚀"
-  });
-});
-
-// =========================
-// SCAM DETECTION
-// =========================
-app.post("/api/analyze", (req, res) => {
+app.post("/api/analyze", upload.single("audio"), async (req, res) => {
   try {
+    // -------------------------
+    // AUDIO
+    // -------------------------
+    if (req.file) {
+      console.log("Audio received:", {
+        filename: req.file.originalname,
+        size: req.file.size,
+        mimetype: req.file.mimetype
+      });
+
+      return res.status(501).json({
+        error: "Audio received successfully, but transcription is not configured yet.",
+        filename: req.file.originalname,
+        size: req.file.size,
+        mimetype: req.file.mimetype
+      });
+    }
+
+    // -------------------------
+    // TEXT
+    // -------------------------
     const { text } = req.body;
 
     if (typeof text !== "string" || !text.trim()) {
