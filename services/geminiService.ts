@@ -1,6 +1,6 @@
 const OLLAMA_BASE =
-  import.meta.env.VITE_OLLAMA_API_URL ||
-  "https://api.justiceoncall.ca";
+  import.meta.env.VITE_API_URL ||
+  "https://srg-scam-check-backend.onrender.com";
 
 const OLLAMA_MODEL =
   import.meta.env.VITE_OLLAMA_MODEL ||
@@ -52,7 +52,7 @@ async function askOllama(
   images: string[] = [],
   model: string = OLLAMA_MODEL
 ): Promise<string> {
-  const endpoint = OLLAMA_BASE;
+  const endpoint = `${OLLAMA_BASE}/api/ollama`;
 
   const cleanImages = images
     .filter(Boolean)
