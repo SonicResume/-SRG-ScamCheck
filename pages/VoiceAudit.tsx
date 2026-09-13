@@ -87,7 +87,7 @@ const VoiceAudit: React.FC<VoiceAuditProps> = ({ onResult }) => {
     formData.append('audio', file);
 
     const response = await fetch(
-      `${API_BASE_URL}/api/analyze`,
+      `${API_BASE_URL}/api/analyze-audio`,
       {
         method: 'POST',
         body: formData,
