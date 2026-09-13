@@ -1,10 +1,11 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 import json
 import os
 import pickle
 import re
+import tempfile
 from datetime import datetime, timezone
 from urllib.parse import urlparse
 
@@ -28,6 +29,8 @@ MAX_URL_LENGTH = 2048
 # ============================================================
 # APP
 # ============================================================
+from backend.voice_model import voice_model
+
 
 app = FastAPI(
     title="SRG ScamCheck API",
@@ -137,6 +140,83 @@ class FeedbackData(BaseModel):
 # ============================================================
 # HEALTH / STATUS
 # ============================================================
+
+
+@app.get("/api/voice-health")
+def voice_health():
+    return {
+        "status": "ok",
+        "service": "voice-scam-classifier",
+        "device": str(voice_model.encoder.device),
+    }
+
+
+@app.post("/api/analyze-audio")
+async def analyze_audio(audio: UploadFile = File(...)):
+    if not audio.filename:
+        raise HTTPException(status_code=400, detail="Audio filename is missing")
+
+    suffix = os.path.splitext(audio.filename)[1].lower()
+
+    allowed_extensions = {
+        ".wav",
+        ".flac",
+        ".mp3",
+        ".m4a",
+        ".ogg",
+        ".webm",
+    }
+
+    if suffix not in allowed_extensions:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "Unsupported audio format. "
+                "Supported formats: WAV, FLAC, MP3, M4A, OGG, WEBM."
+            ),
+        )
+
+    temp_path = None
+
+    try:
+        audio_bytes = await audio.read()
+
+        if not audio_bytes:
+            raise HTTPException(
+                status_code=400,
+                detail="Audio file is empty",
+            )
+
+        fd, temp_path = tempfile.mkstemp(suffix=suffix)
+        os.close(fd)
+
+        with open(temp_path, "wb") as f:
+            f.write(audio_bytes)
+
+        result = voice_model.predict_file(temp_path)
+
+        return {
+            "filename": audio.filename,
+            "mimetype": audio.content_type,
+            **result,
+        }
+
+    except HTTPException:
+        raise
+
+    except Exception as exc:
+        print(f"Audio analysis failed: {exc}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Audio analysis failed: {str(exc)}",
+        )
+
+    finally:
+        if temp_path and os.path.exists(temp_path):
+            try:
+                os.remove(temp_path)
+            except OSError:
+                pass
 
 @app.get("/")
 def read_root():

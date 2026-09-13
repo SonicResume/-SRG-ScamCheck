@@ -5,6 +5,10 @@ import { auditVoiceResult } from '../services/geminiService';
 import { VoiceAnalysisResult } from '../types';
 import jsPDF from 'jspdf';
 
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  'https://srg-scam-check-backend.onrender.com';
+
 interface VoiceAuditProps {
   onResult?: (item: any) => void;
 }
@@ -68,19 +72,69 @@ const VoiceAudit: React.FC<VoiceAuditProps> = ({ onResult }) => {
       setResult(null);
       setTranscription('');
       
-      await transcribeAudioFile(file);
+      await analyzeAudioFile(file);
     } else if (file) {
-      alert('Please upload a valid audio file (MP3, WAV, etc.)');
+      alert('Please upload a valid audio file (MP3, WAV, FLAC, etc.)');
     }
   };
 
-  const transcribeAudioFile = async (_file: File) => {
-    setIsAnalyzing(false);
-    setTranscription(
-      "Audio file loaded. Browser speech recognition is available for live microphone capture; uploaded-file transcription requires an audio transcription backend."
-    );
-  };
+  const analyzeAudioFile = async (file: File) => {
+  setIsAnalyzing(true);
+  setResult(null);
 
+  try {
+    const formData = new FormData();
+    formData.append('audio', file);
+
+    const response = await fetch(
+      `${API_BASE_URL}/api/analyze`,
+      {
+        method: 'POST',
+        body: formData,
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.error ||
+        data.detail ||
+        'Audio analysis failed'
+      );
+    }
+
+    const safeResult: VoiceAnalysisResult = {
+      isDeepfake: data.label === 'Scam',
+      probability: Number(data.probability ?? 0),
+      transcription: '',
+      anomalies:
+        data.label === 'Scam'
+          ? ['Audio classified as potentially fraudulent']
+          : [],
+    };
+
+    setResult(safeResult);
+
+    onResult({
+      type: 'voice',
+      target: file.name,
+      isDeepfake: safeResult.isDeepfake,
+      probability: safeResult.probability,
+    });
+  } catch (error) {
+    console.error('Audio analysis failed:', error);
+
+    alert(
+      error instanceof Error
+        ? error.message
+        : 'Audio analysis failed'
+    );
+  } finally {
+    setIsAnalyzing(false);
+  }
+};
+  
   const handleStartRecording = async () => {
     setTranscription('');
     setCurrentLiveTranscription('');
