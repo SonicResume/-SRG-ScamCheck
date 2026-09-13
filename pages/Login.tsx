@@ -165,7 +165,7 @@ export default function AuthPage({
         </button>
 
         <div className="text-xs font-black uppercase tracking-[0.28em] text-[#66388a]">
-          ScamShield
+          SRG-ScamCheck
         </div>
       </div>
 
@@ -177,7 +177,7 @@ export default function AuthPage({
             <div className="mb-5 flex h-24 w-24 items-center justify-center rounded-[30px] bg-white/70 p-4 shadow-[0_20px_60px_rgba(84,42,105,0.15)] backdrop-blur-xl">
               <img
                 src="/logo.png"
-                alt="ScamShield"
+                alt="SRG-ScamCheck"
                 className="max-h-full max-w-full object-contain"
               />
             </div>
@@ -314,7 +314,7 @@ export default function AuthPage({
               {loading
                 ? "Please wait..."
                 : mode === "login"
-                  ? "Enter ScamShield"
+                  ? "Enter SRG-ScamCheck"
                   : mode === "signup"
                     ? "Create account"
                     : "Send reset link"}

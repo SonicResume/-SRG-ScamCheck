@@ -17,7 +17,7 @@ const History: React.FC<HistoryProps> = ({ history = [] }) => {
     <div className="space-y-8 animate-in fade-in duration-500 max-w-7xl mx-auto font-sans">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h2 className="text-4xl font-black text-slate-950 italic tracking-tighter uppercase leading-none">Intelligence <span className="text-indigo-800">Archive</span></h2>
+          <h2 className="text-4xl font-black text-slate-950 italic tracking-tighter uppercase leading-none">Scam Evidence <span className="text-indigo-800">Archive</span></h2>
           <p className="text-slate-700 text-sm mt-2 font-bold">Cloud-synced forensic database of all analyzed nodes.</p>
         </div>
         
@@ -35,10 +35,10 @@ const History: React.FC<HistoryProps> = ({ history = [] }) => {
               >
                 <option value="all">All Logs</option>
                 <option value="scam">Forensic Scan</option>
-                <option value="upi">Financial Audit</option>
-                <option value="voice">Spectral Audit</option>
-                <option value="url">Domain Guard</option>
-                <option value="firm">Entity Check</option>
+                <option value="upi">Financial </option>
+                <option value="voice">Spectral </option>
+                <option value="url">Domain </option>
+                <option value="firm">Entity </option>
               </select>
            </div>
         </div>
@@ -122,7 +122,7 @@ const History: React.FC<HistoryProps> = ({ history = [] }) => {
             <HistoryIcon size={28} />
          </div>
          <div className="space-y-1">
-            <p className="text-xs text-slate-950 font-black uppercase tracking-widest">Decentralized Archive Persistence</p>
+            <p className="text-xs text-slate-950 font-black uppercase tracking-widest">Distributed Archive Storage</p>
             <p className="text-xs text-slate-700 font-bold leading-relaxed">
               Forensic records are synced across all authorized nodes. Archive integrity is verified via 
               <span className="text-indigo-950 font-black"> SRG ScamCheck Real-time Sync (v2.4)</span>.
