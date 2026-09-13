@@ -14,7 +14,12 @@ MODEL_PATH = os.path.join(
     "best.pt",
 )
 
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+DEVICE = torch.device(
+    "cuda"
+    if os.getenv("VOICE_DEVICE", "cpu").lower() == "cuda"
+    and torch.cuda.is_available()
+    else "cpu"
+)
 TARGET_SAMPLE_RATE = 16000
 
 
