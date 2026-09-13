@@ -316,6 +316,22 @@ app.post("/api/ai", async (req, res) => {
           )
       : [];
 
+    const selectedModel =
+      type === "vision"
+        ? OLLAMA_VISION_MODEL
+        : OLLAMA_MODEL;
+
+    const generateUrl =
+      OLLAMA_API_URL.endsWith("/api/generate")
+        ? OLLAMA_API_URL
+        : `${OLLAMA_API_URL.replace(/\/$/, "")}/api/generate`;
+
+    console.log("AI request:", {
+      type,
+      model: selectedModel,
+      imageCount: cleanImages.length
+    });
+
     const controller = new AbortController();
 
     const timeout = setTimeout(() => {
@@ -324,7 +340,7 @@ app.post("/api/ai", async (req, res) => {
 
     try {
       const response = await fetch(
-        `${OLLAMA_API_URL.replace(/\/$/, "")}/api/generate`,
+        generateUrl,
         {
           method: "POST",
           headers: {
@@ -332,7 +348,7 @@ app.post("/api/ai", async (req, res) => {
             "Accept": "application/json"
           },
           body: JSON.stringify({
-            model: OLLAMA_MODEL,
+            model: selectedModel,
             prompt: prompt.trim(),
             stream: false,
             ...(cleanImages.length
@@ -343,42 +359,44 @@ app.post("/api/ai", async (req, res) => {
         }
       );
 
+      const rawText = await response.text();
+
+      let data;
+
+      try {
+        data = JSON.parse(rawText);
+      } catch {
+        data = {
+          response: rawText
+        };
+      }
+
       if (!response.ok) {
-        const errorText = await response.text();
+        console.error("Ollama error:", data);
 
-        console.error(
-          "Private AI service error:",
-          response.status,
-          errorText
-        );
-
-        return res.status(502).json({
-          error: "AI analysis service unavailable"
+        return res.status(response.status).json({
+          error:
+            data?.error ||
+            data?.message ||
+            "Ollama request failed"
         });
       }
 
-      const data = await response.json();
-
-      return res.json({
-        response:
-          typeof data.response === "string"
-            ? data.response
-            : ""
-      });
+      return res.json(data);
     } finally {
       clearTimeout(timeout);
     }
-  } catch (err) {
-    console.error("Private AI proxy error:", err);
+  } catch (error) {
+    console.error("AI route error:", error);
 
-    if (err.name === "AbortError") {
+    if (error?.name === "AbortError") {
       return res.status(504).json({
-        error: "AI analysis timed out"
+        error: "AI request timed out"
       });
     }
 
-    return res.status(502).json({
-      error: "AI analysis service unavailable"
+    return res.status(500).json({
+      error: error?.message || "AI request failed"
     });
   }
 });
