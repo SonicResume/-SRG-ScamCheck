@@ -78,6 +78,7 @@ async function askOllama(
         Accept: "application/json",
       },
       body: JSON.stringify({
+        type: cleanImages.length > 0 ? "vision" : "text",
         model,
         prompt,
         stream: false,
