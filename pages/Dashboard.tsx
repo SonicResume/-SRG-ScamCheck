@@ -87,7 +87,7 @@ const Dashboard: React.FC<DashboardProps> = ({ auditCount, onAddNotification }) 
       if (onAddNotification) {
         onAddNotification({
           id: Date.now(),
-          title: `🚨 1KM SCAM ZONE DETECTED: ${closest.alert.areaName}`,
+          title: `🚨 1KM ZONE DETECTED: ${closest.alert.areaName}`,
           message: `Distance: ${closest.distance} km away. Threat type: ${closest.alert.scamType}. ${closest.alert.description}`,
           type: 'proximity',
           read: false
@@ -406,7 +406,7 @@ const Dashboard: React.FC<DashboardProps> = ({ auditCount, onAddNotification }) 
              className="bg-gradient-to-r from-rose-700 via-rose-600 to-red-600 hover:from-rose-800 hover:to-red-700 text-white px-7 py-4 rounded-2xl shadow-2xl shadow-rose-900/30 font-black text-sm uppercase tracking-wider flex items-center gap-3 border-2 border-rose-400 ring-4 ring-rose-500/30 transition-all hover:scale-105 active:scale-95 cursor-pointer group animate-pulse"
            >
              <Radio size={20} className="text-amber-300 group-hover:scale-125 transition-transform" />
-             <span>📢 Broadcast Scam Intelligence Alert</span>
+             <span>📢 Issue Scam Alert</span>
            </button>
         </div>
       </div>
@@ -448,7 +448,7 @@ const Dashboard: React.FC<DashboardProps> = ({ auditCount, onAddNotification }) 
             <MapPin size={20} className="animate-bounce" />
           </div>
           <div>
-            <p className="text-[9px] font-black uppercase text-slate-500 tracking-wider">Nearby Active Alerts</p>
+            <p className="text-[9px] font-black uppercase text-slate-500 tracking-wider">Nearby Scam Reports</p>
             <div className="flex items-baseline gap-1.5 mt-0.5">
               <span className="text-xl font-black text-slate-950 italic">{alerts.length}</span>
               <span className="text-[9px] font-bold text-amber-800">In Neighborhood</span>
@@ -485,11 +485,11 @@ const Dashboard: React.FC<DashboardProps> = ({ auditCount, onAddNotification }) 
                     <h3 className="text-lg md:text-xl font-black uppercase italic leading-none text-slate-950">
                       Live <span className="text-rose-800">Scam Intelligence Map</span>
                     </h3>
-                    <p className="text-xs text-slate-700 font-extrabold mt-1">Interactive map showing reported scam alerts broadcasted across neighborhoods</p>
+                    <p className="text-xs text-slate-700 font-extrabold mt-1">Live map of reported scam activity by neighborhood</p>
                  </div>
               </div>
               <span className="px-3 py-1 bg-emerald-100 text-emerald-950 border border-emerald-300 rounded-full text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 shadow-2xs">
-                 <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span> AREA BROADCAST LIVE
+                 <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span> LIVE AREA BROADCAST
               </span>
            </div>
 
@@ -552,8 +552,8 @@ const Dashboard: React.FC<DashboardProps> = ({ auditCount, onAddNotification }) 
               {/* Realtime User Incidents Ticker */}
               <div className="bg-slate-950 text-slate-200 p-2.5 rounded-xl text-[10px] font-mono font-bold space-y-1 overflow-hidden border border-slate-800 shadow-inner">
                 <div className="text-[8px] text-indigo-400 font-black uppercase tracking-widest border-b border-slate-800 pb-1 mb-1 flex items-center justify-between">
-                  <span>👤 USER-REPORTED INCIDENTS</span>
-                  <span className="text-emerald-400 animate-pulse">● LIVE VERIFIED</span>
+                  <span>👤 USER-REPORTED ALERTS</span>
+                  <span className="text-emerald-400 animate-pulse">● VERIFIED IN REAL TIME</span>
                 </div>
                 {alerts.length > 0 ? (
                   alerts.slice(0, 3).map((a, idx) => (
@@ -562,7 +562,7 @@ const Dashboard: React.FC<DashboardProps> = ({ auditCount, onAddNotification }) 
                     </p>
                   ))
                 ) : (
-                  <p className="text-slate-400 font-normal italic">No user-reported incidents yet. Reports entered manually by users will appear here.</p>
+                  <p className="text-slate-400 font-normal italic">There are currently no user-submitted incident reports. Reports will appear here once submitted.</p>
                 )}
               </div>
 
@@ -595,7 +595,7 @@ const Dashboard: React.FC<DashboardProps> = ({ auditCount, onAddNotification }) 
                    <div className="p-6 text-center text-slate-500 bg-[#f8f6f0] rounded-2xl border border-[#e2ddd0]">
                      <Radio size={28} className="mx-auto mb-2 text-slate-400" />
                      <p className="font-extrabold text-xs uppercase text-slate-700">No User Incidents Reported</p>
-                     <p className="text-[11px] text-slate-500 mt-1">Only manually submitted scam reports from community users will be listed here.</p>
+                     <p className="text-[11px] text-slate-500 mt-1">Only manually submitted scam reports from community users will appear here.</p>
                    </div>
                  )}
               </div>
