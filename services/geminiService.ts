@@ -657,9 +657,11 @@ ${cleanUPI}
 }
 
 /**
- * Analyze a voice-call transcript.
+ * Analyze a voice-call transcript for scam/social-engineering indicators.
  *
- * This does NOT perform acoustic/deepfake detection.
+ * IMPORTANT:
+ * This analyzes transcript content only.
+ * It does NOT perform acoustic, spectral, biometric, or deepfake detection.
  */
 export async function auditVoiceResult(
   transcript: string
@@ -671,60 +673,200 @@ export async function auditVoiceResult(
     anomalies: string[];
   }
 > {
-  const cleanTranscript =
-    transcript.trim();
+  const cleanTranscript = transcript.trim();
 
   if (!cleanTranscript) {
-    throw new Error(
-      "No voice transcript was provided."
-    );
+    throw new Error("No voice transcript was provided.");
   }
 
   const result = await askOllama(`
 You are SRG ScamCheck's voice-scam forensic analysis engine.
 
-Analyze the transcript for:
-- impersonation
-- urgency
-- threats
-- financial manipulation
-- credential requests
-- OTP requests
-- payment requests
-- social engineering
-- coercion
-- suspicious instructions
+Your task is to analyze ONLY the supplied voice-call transcript for
+evidence of fraud, impersonation, coercion, manipulation, phishing,
+financial exploitation, or other social-engineering behavior.
 
-Do NOT claim acoustic deepfake detection.
-Transcript text alone cannot establish whether a voice recording
-is synthetically generated.
+CRITICAL EVIDENCE RULES:
 
-Return ONLY valid JSON:
+1. Use ONLY information contained in the transcript.
+2. Do NOT invent facts, identities, organizations, events, databases,
+   criminal records, complaints, or external verification.
+3. Do NOT claim that a caller, company, bank, government agency,
+   police service, employer, or other organization is fraudulent
+   unless the transcript itself provides strong evidence of deceptive
+   behavior.
+4. A caller sounding suspicious is not by itself proof of a scam.
+5. Do NOT confuse unusual wording, accents, grammar, or transcription
+   errors with evidence of fraud.
+6. If evidence is weak or ambiguous, classify the call as SUSPICIOUS
+   rather than SCAM.
+7. If the transcript contains no meaningful scam indicators, classify it
+   as SAFE.
+8. Transcript text alone CANNOT determine whether a voice recording is
+   AI-generated, cloned, synthetic, manipulated, or a deepfake.
+9. Never claim acoustic, spectral, biometric, waveform, or deepfake
+   detection was performed.
+
+ANALYZE FOR THESE INDICATORS:
+
+- Caller impersonating a bank, police service, government agency,
+  employer, family member, friend, technical-support representative,
+  delivery company, financial institution, lawyer, or other authority.
+- Requests for passwords, PINs, security codes, authentication codes,
+  OTPs, account numbers, credit-card information, SIN/SSN, or other
+  sensitive credentials.
+- Requests to send money, transfer funds, purchase gift cards,
+  cryptocurrency, wire money, or make unusual payments.
+- Requests to install remote-access software or give control of a device.
+- Pressure to bypass normal security procedures.
+- Urgency designed to prevent independent verification.
+- Threats involving arrest, account closure, legal action, deportation,
+  loss of employment, financial penalties, or other consequences.
+- Secrecy requests such as "do not tell anyone", "keep this private",
+  or instructions not to contact the organization directly.
+- Instructions to remain on the phone while performing a financial or
+  account action.
+- Requests to move a conversation to another platform because it is
+  supposedly more secure.
+- Suspicious verification or identity-confirmation requests.
+- Emotional manipulation involving fear, authority, romance, family
+  emergencies, rewards, prizes, refunds, investments, or employment.
+- Advance-fee requests.
+- Requests for remote access or screen sharing.
+- Suspicious instructions involving cryptocurrency, gift cards,
+  cash deposits, money mules, or unusual payment methods.
+- Contradictions or inconsistencies in the caller's stated identity,
+  purpose, or instructions.
+- Attempts to discourage independent verification.
+
+SCORING GUIDANCE:
+
+0-20:
+No meaningful scam indicators. Normal conversation or benign request.
+
+21-34:
+Minor unusual behavior or insufficient evidence. Do not overstate risk.
+
+35-54:
+SUSPICIOUS. One or more meaningful warning signs are present, but
+there is not enough evidence to confidently identify a scam.
+
+55-74:
+High concern. Multiple scam indicators, manipulation techniques,
+credential requests, payment requests, impersonation, or coercive
+behavior are present.
+
+75-100:
+SCAM. Strong evidence of fraud or a coordinated social-engineering
+attempt, especially when multiple high-risk indicators occur together.
+
+CLASSIFICATION RULES:
+
+- SAFE = little or no evidence of scam behavior.
+- SUSPICIOUS = concerning indicators exist but evidence is incomplete,
+  ambiguous, or insufficient for a confident scam conclusion.
+- SCAM = strong evidence of fraudulent or malicious social engineering.
+
+Do not automatically classify a transcript as SCAM simply because it
+contains words such as "bank", "police", "payment", "password", "OTP",
+"investment", or "verification". Judge the surrounding context.
+
+RISK-SCORE RULES:
+
+- riskScore must be an integer from 0 to 100.
+- The score must reflect the strength and quantity of actual evidence.
+- Do not use 75+ unless there is substantial evidence.
+- Do not use 100 unless the transcript contains exceptionally strong
+  evidence of a scam.
+- When evidence is ambiguous, reduce the score.
+
+INDICATOR RULES:
+
+Every indicator must describe an actual observation from the transcript.
+
+Good:
+"Caller requested a one-time verification code."
+"Caller threatened account closure unless payment was made immediately."
+"Caller instructed the recipient not to contact the bank independently."
+
+Bad:
+"This is definitely a scam."
+"The caller is a criminal."
+"The number is fraudulent."
+
+Do not repeat the same indicator in different wording.
+
+RECOMMENDATION RULES:
+
+Give practical safety advice based on the evidence.
+
+Examples:
+- Independently contact the organization using an official phone number.
+- Do not provide OTPs, passwords, PINs, or authentication codes.
+- Do not send money until the request is independently verified.
+- Do not install remote-access software at the caller's direction.
+- End the call if the caller refuses independent verification.
+
+OUTPUT REQUIREMENTS:
+
+Return ONLY one valid JSON object.
+
+Do not use Markdown.
+Do not use code fences.
+Do not include commentary before or after the JSON.
+
+Required structure:
 
 {
   "riskScore": 0,
   "classification": "SAFE",
   "category": "Voice scam",
-  "summary": "Short evidence-based explanation",
-  "indicators": [],
-  "recommendation": "Short safety recommendation"
+  "summary": "Short evidence-based explanation.",
+  "indicators": [
+    "Actual observable indicator from the transcript."
+  ],
+  "recommendation": "Practical safety recommendation."
 }
 
-Transcript:
+JSON RULES:
+
+- riskScore: integer 0-100.
+- classification: exactly SAFE, SUSPICIOUS, or SCAM.
+- category: short descriptive category.
+- summary: one or two concise sentences.
+- indicators: array of strings.
+- recommendation: one or two concise sentences.
+- Use an empty indicators array when no meaningful indicators exist.
+- Ensure the JSON is syntactically valid.
+- Do not include trailing commas.
+
+VOICE TRANSCRIPT:
+
 ${cleanTranscript}
 `);
 
-  const data =
-    extractJson<any>(result);
+  const data = extractJson<any>(result);
 
-  const riskScore =
-    clampScore(data.riskScore);
+  const riskScore = clampScore(data.riskScore);
 
-  const classification =
-    normalizeClassification(
-      data.classification,
-      riskScore
-    );
+  const classification = normalizeClassification(
+    data.classification,
+    riskScore
+  );
+
+  const indicators = stringArray(data.indicators);
+
+  const summary =
+    typeof data.summary === "string" &&
+    data.summary.trim()
+      ? data.summary.trim()
+      : "Voice transcript analysis completed.";
+
+  const recommendation =
+    typeof data.recommendation === "string" &&
+    data.recommendation.trim()
+      ? data.recommendation.trim()
+      : "Verify the caller independently before sharing information or sending money.";
 
   return {
     riskScore,
@@ -732,36 +874,35 @@ ${cleanTranscript}
     classification,
 
     category:
-      data.category ||
-      "Voice scam",
+      typeof data.category === "string" &&
+      data.category.trim()
+        ? data.category.trim()
+        : "Voice scam",
 
-    summary:
-      data.summary ||
-      "Voice transcript analysis completed.",
+    summary,
 
-    indicators:
-      stringArray(data.indicators),
+    indicators,
 
-    recommendation:
-      data.recommendation ||
-      "Verify the caller independently before sharing information or sending money.",
+    recommendation,
 
-    // IMPORTANT:
-    // This is NOT acoustic deepfake detection.
+    // Transcript analysis cannot establish whether a recording
+    // is an AI-generated or cloned voice.
     isDeepfake: false,
 
-    probability: riskScore,
+    // Do not falsely represent the scam risk score as a
+    // deepfake probability.
+    probability: 0,
 
     verdict:
-      data.summary ||
-      classification ||
-      "Analysis complete.",
+      classification === "SCAM"
+        ? "High-confidence scam indicators detected."
+        : classification === "SUSPICIOUS"
+          ? "Suspicious indicators detected; independent verification is recommended."
+          : "No significant scam indicators detected in the transcript.",
 
-    anomalies:
-      stringArray(data.indicators),
+    anomalies: indicators,
   };
 }
-
 /**
  * Analyze employment/company information.
  */
