@@ -52,7 +52,7 @@ async function askOllama(
   images: string[] = [],
   model: string = OLLAMA_MODEL
 ): Promise<string> {
-  const endpoint = `${OLLAMA_BASE}/api/generate`;
+  const endpoint = OLLAMA_BASE;
 
   const cleanImages = images
     .filter(Boolean)
