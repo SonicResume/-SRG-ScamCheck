@@ -534,6 +534,13 @@ const Landing = ({ onStart, onLogin }: LandingProps) => {
               <button onClick={() => onStart("terms")} className="transition hover:text-[#7451a7]">
                 Terms of Service
               </button>
+          
+              <button
+                onClick={() => onStart("contact")}
+                className="transition hover:text-[#7451a7]"
+             >
+               Contact
+             </button>
             </nav>
 
             <div className="mt-8 w-full border-t border-[#8d719e]/10 pt-5">

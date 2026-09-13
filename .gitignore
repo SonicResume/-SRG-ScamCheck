@@ -35,3 +35,4 @@ __pycache__/
 # Large voice model files
 backend/models/voice/caa-wav2vec2/best.pt
 models/voice/caa-wav2vec2/best.pt
+.vercel

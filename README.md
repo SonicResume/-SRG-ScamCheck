@@ -1,19 +1,38 @@
 # -SRG-ScamCheck
 
-A scam-detection and investigation platform designed to help users identify suspicious websites, messages, UPI/payment information, and other potentially fraudulent activity.
+**Commercial Scam Detection & Investigation Platform**
+
+-SRG-ScamCheck is a commercial platform designed to help users investigate potentially suspicious websites, messages, payment information, and other scam-related activity.
+
+## Production Status
+
+**Production-ready application**
+
+The platform is designed for production deployment with:
+
+* React + TypeScript frontend
+* Vite production builds
+* Python backend services
+* Firebase integration
+* AI-assisted scam analysis
+* Ollama-compatible AI inference
+* Render backend deployment
+* Stripe billing integration
+* Environment-based configuration
+* Proprietary commercial licensing
 
 ## Features
 
-* 🔎 Scam investigation and detection
-* 🌐 Website and URL checking
-* 💬 Message and text investigation
-* 💳 UPI/payment-related scam checks
-* 🤖 Python-powered backend services
-* 🔐 Firebase integration
-* ⚡ React + Vite frontend
-* 📊 Machine-learning based detection models
+* Website and URL investigation
+* Message and text analysis
+* Scam and fraud investigation
+* Payment and UPI-related checks
+* AI-assisted investigation
+* Backend-powered analysis services
+* Production billing infrastructure
+* Secure environment-based configuration
 
-## Tech Stack
+## Technology Stack
 
 ### Frontend
 
@@ -27,60 +46,53 @@ A scam-detection and investigation platform designed to help users identify susp
 * Python
 * Machine-learning models
 * API services
+* Render deployment
+
+### AI
+
+* Ollama-compatible API
+* Qwen-based AI model
+* AI-assisted scam investigation
 
 ### Infrastructure
 
 * Firebase
-* Render for backend deployment
+* Render
+* Stripe
 
-## Project Structure
-
-```text
--SRG-ScamCheck/
-├── backend/
-├── components/
-├── lib/
-├── pages/
-├── public/
-├── services/
-├── App.tsx
-├── index.tsx
-├── package.json
-├── vite.config.ts
-└── README.md
-```
-
-## Getting Started
-
-### Install dependencies
-
-```bash
-npm install
-```
-
-### Start the development server
-
-```bash
-npm run dev
-```
-
-### Build for production
-
-```bash
-npm run build
-```
-
-## Environment Variables
-
-Create a local `.env` file based on:
+## Production Architecture
 
 ```text
-.env.example
+User
+  ↓
+-SRG-ScamCheck Frontend
+  ↓
+Python Backend API
+  ↓
+AI / Investigation Services
+  ↓
+Firebase / External Services
 ```
 
-Do not commit private API keys, credentials, or other secrets.
+Billing is handled through the application's Stripe payment infrastructure.
 
-## Backend
+## Environment Configuration
+
+Production credentials and secrets must be stored using environment variables.
+
+Never commit:
+
+* API keys
+* Stripe secret keys
+* Stripe webhook secrets
+* Private Firebase credentials
+* Other private credentials
+
+Use `.env.example` as the configuration reference.
+
+## Deployment
+
+The frontend and backend are deployed as separate services.
 
 The Python backend is located in:
 
@@ -88,30 +100,53 @@ The Python backend is located in:
 backend/
 ```
 
-Python dependencies are defined in:
+Backend dependencies are defined in:
 
 ```text
 backend/requirements.txt
 ```
 
-Stripe
+Large voice-model files are intentionally excluded from Git because GitHub's standard Git file-size limit does not support files of that size.
 
-The large voice-model `.pt` files are intentionally excluded from Git because GitHub's normal repository limit blocks files larger than 100 MB.
+## Commercial Software
 
-## Deployment
+-SRG-ScamCheck is proprietary commercial software.
 
-The frontend and backend can be deployed separately.
+Commercial use, redistribution, resale, sublicensing, modification for commercial distribution, or incorporation into another commercial product requires written authorization and an applicable commercial license.
 
-* Frontend: Vite production build
-* Backend: Render
-* Firebase: application services and configuration
-  Stripe
+See `LICENSE` for the complete proprietary license.
 
-## Development
+## Legal
 
-This repository contains the current development version of **-SRG-ScamCheck**.
+The production application provides:
 
+* Terms of Service
+* Privacy Policy
+* Contact / Support information
+* Billing and cancellation information
+
+Use of the service is subject to the applicable Terms of Service and Privacy Policy.
+
+## No-Refund Policy
+
+Payments for the service are **non-refundable**, except where a refund is required by applicable law or expressly approved by the service provider.
+
+The applicable billing terms are presented to users before purchase.
+
+## Contact
+
+For support, commercial licensing, partnerships, or other inquiries, use the official -SRG-ScamCheck contact page.
+
+## Disclaimer
+
+-SRG-ScamCheck is intended to assist with scam and fraud investigation.
+
+Automated analysis may be inaccurate, incomplete, or unavailable in some circumstances. Results should not be treated as guaranteed determinations of fraud, identity, legality, or financial loss.
+
+Users remain responsible for decisions made based on information provided by the service.
 
 ## License
 
-License information will be added separately.
+**Proprietary Software — All Rights Reserved.**
+
+See `LICENSE` for the complete commercial license terms.

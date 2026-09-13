@@ -22,6 +22,7 @@ import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import Support from "./pages/Support";
 import AccountPage from "./pages/AccountPage";
+import ContactPage from "./pages/Contact";
 
 type PublicPage =
   | "landing"
@@ -29,7 +30,8 @@ type PublicPage =
   | "pricing"
   | "privacy"
   | "terms"
-  | "success";
+  | "success"
+  | "contact";
 
 type AppPage =
   | "dashboard"
@@ -65,6 +67,7 @@ const getPath = () => {
   if (path === "/settings") return "settings";
   if (path === "/support") return "support";
   if (path === "/account") return "account";
+  if (path === "/contact") return "contact";
 
   return "landing";
 };
@@ -81,6 +84,8 @@ const pathForPage = (page: string) => {
       return "/terms";
     case "success":
       return "/success";
+    case "contact":
+      return "/contact";
 
     case "dashboard":
       return "/dashboard";
@@ -118,6 +123,7 @@ const isPublicPage = (page: string) => {
     "privacy",
     "terms",
     "success",
+    "contact",
   ].includes(page);
 };
 
@@ -274,6 +280,10 @@ function App() {
 
   if (currentPage === "success") {
     return <Success />;
+  }
+
+  if (currentPage === "contact") {
+  return <ContactPage />;
   }
 
   /*
