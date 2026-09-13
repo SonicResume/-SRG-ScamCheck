@@ -1,162 +1,84 @@
-const OLLAMA_BASE =
+// =========================
+// 🤖 PRIVATE AI CLIENT
+// =========================
+
+const API_BASE =
   import.meta.env.VITE_API_URL ||
   "https://srg-scam-check-backend.onrender.com";
 
-const OLLAMA_MODEL =
-  import.meta.env.VITE_OLLAMA_MODEL ||
-  "theo:latest";
-
-type OllamaResponse = {
-  response?: string;
-  message?: {
-    content?: string;
-  };
-};
-
-export type ScamAnalysis = {
-  riskScore: number;
-  classification: "SAFE" | "SUSPICIOUS" | "SCAM";
-  category: string;
-  summary: string;
-  indicators: string[];
-  recommendation: string;
-};
-
-export type ImageScamAnalysis = {
-  isScam: boolean;
-  riskScore: number;
-  confidence: number;
-  intent: string;
-  redFlags: string[];
-  summary: string;
-  forensicBreakdown: {
-    psychologicalTriggers: string[];
-    technicalAnomalies: string[];
-    urgencyLevel: "Low" | "Medium" | "High" | "Extreme";
-  };
-  educationalInsight: string;
-};
+type AIRequestType = "text" | "vision";
 
 /**
- * Safely call Ollama.
+ * Send an AI request through the private backend proxy.
  *
- * Handles:
- * - HTTP errors
- * - empty responses
- * - invalid JSON from the API
- * - Ollama response/content differences
- * - optional vision images
+ * The frontend never knows:
+ * - the AI provider URL
+ * - the AI model name
+ * - the vision model name
+ * - the provider's internal API endpoint
  */
-async function askOllama(
+async function askAI(
   prompt: string,
   images: string[] = [],
-  model: string = OLLAMA_MODEL
+  type: AIRequestType = "text"
 ): Promise<string> {
-  const endpoint = `${OLLAMA_BASE}/api/ollama`;
+  if (
+    typeof prompt !== "string" ||
+    !prompt.trim()
+  ) {
+    throw new Error("Missing AI prompt.");
+  }
 
-  const cleanImages = images
-    .filter(Boolean)
-    .map((image) =>
-      image.replace(/^data:image\/[^;]+;base64,/i, "")
-    );
-
-  console.log("OLLAMA REQUEST", {
-    endpoint,
-    model,
-    hasImages: cleanImages.length > 0,
-    imageCount: cleanImages.length,
-  });
-
-  let response: Response;
-
-  try {
-    response = await fetch(endpoint, {
+  const response = await fetch(
+    `${API_BASE}/api/ai`,
+    {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Accept: "application/json",
+        "Accept": "application/json",
       },
       body: JSON.stringify({
-        model,
-        prompt,
-        stream: false,
-        ...(images.length ? { images } : {}),
+        prompt: prompt.trim(),
+        images,
+        type,
       }),
-    });
-  } catch (error) {
-    console.error("OLLAMA NETWORK ERROR:", error);
-
-    throw new Error(
-      "Unable to connect to the Ollama analysis server."
-    );
-  }
-
-  const rawBody = await response.text();
-
-  console.log("OLLAMA HTTP STATUS:", response.status);
-
-  if (!response.ok) {
-    console.error("OLLAMA ERROR BODY:", rawBody);
-
-    throw new Error(
-      `Ollama API error ${response.status}: ${
-        rawBody || "empty response"
-      }`
-    );
-  }
-
-  if (!rawBody.trim()) {
-    throw new Error(
-      `Ollama returned an empty response for model "${model}".`
-    );
-  }
-
-  let data: OllamaResponse;
-
-  try {
-    data = JSON.parse(rawBody);
-  } catch (error) {
-    console.error(
-      "OLLAMA INVALID API RESPONSE:",
-      rawBody
-    );
-
-    throw new Error(
-      "Ollama returned an invalid API response."
-    );
-  }
-
-  const content =
-    data.response?.trim() ||
-    data.message?.content?.trim() ||
-    "";
-
-  if (!content) {
-    console.error(
-      "OLLAMA RESPONSE CONTAINED NO CONTENT:",
-      data
-    );
-
-    throw new Error(
-      `Ollama returned no model content for "${model}".`
-    );
-  }
-
-  console.log(
-    "OLLAMA RESPONSE LENGTH:",
-    content.length
+    }
   );
 
-  return content;
+  let data: any = {};
+
+  try {
+    data = await response.json();
+  } catch {
+    data = {};
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      typeof data.error === "string"
+        ? data.error
+        : "AI analysis service unavailable."
+    );
+  }
+
+  if (
+    typeof data.response !== "string"
+  ) {
+    throw new Error(
+      "Invalid AI service response."
+    );
+  }
+
+  return data.response;
 }
 
 /**
- * Extract a JSON object from an Ollama response.
+ * Extract a JSON object from an AI response.
  */
 function extractJson<T>(text: string): T {
   if (!text || !text.trim()) {
     throw new Error(
-      "Ollama returned empty model content."
+      "AI service returned empty content."
     );
   }
 
@@ -172,8 +94,11 @@ function extractJson<T>(text: string): T {
     // Continue with object extraction.
   }
 
-  const start = cleaned.indexOf("{");
-  const end = cleaned.lastIndexOf("}");
+  const start =
+    cleaned.indexOf("{");
+
+  const end =
+    cleaned.lastIndexOf("}");
 
   if (
     start === -1 ||
@@ -181,36 +106,31 @@ function extractJson<T>(text: string): T {
     end <= start
   ) {
     console.error(
-      "INVALID OLLAMA JSON:",
-      cleaned
+      "AI response did not contain valid JSON."
     );
 
     throw new Error(
-      `Ollama returned invalid JSON: ${cleaned.slice(
-        0,
-        1000
-      )}`
+      "AI service returned invalid JSON."
     );
   }
 
-  const jsonCandidate = cleaned.slice(
-    start,
-    end + 1
-  );
+  const jsonCandidate =
+    cleaned.slice(
+      start,
+      end + 1
+    );
 
   try {
-    return JSON.parse(jsonCandidate) as T;
-  } catch (error) {
-    console.error(
-      "MALFORMED OLLAMA JSON:",
+    return JSON.parse(
       jsonCandidate
+    ) as T;
+  } catch {
+    console.error(
+      "AI response contained malformed JSON."
     );
 
     throw new Error(
-      `Ollama returned malformed JSON: ${jsonCandidate.slice(
-        0,
-        1000
-      )}`
+      "AI service returned malformed JSON."
     );
   }
 }
@@ -218,7 +138,9 @@ function extractJson<T>(text: string): T {
 /**
  * Keep numeric values safely inside the expected range.
  */
-function clampScore(value: unknown): number {
+function clampScore(
+  value: unknown
+): number {
   const number = Number(value);
 
   if (!Number.isFinite(number)) {
@@ -227,7 +149,10 @@ function clampScore(value: unknown): number {
 
   return Math.min(
     100,
-    Math.max(0, Math.round(number))
+    Math.max(
+      0,
+      Math.round(number)
+    )
   );
 }
 
@@ -239,7 +164,8 @@ function normalizeClassification(
   riskScore: number
 ): "SAFE" | "SUSPICIOUS" | "SCAM" {
   const classification =
-    String(value || "").toUpperCase();
+    String(value || "")
+      .toUpperCase();
 
   if (
     classification === "SAFE" ||
@@ -272,43 +198,45 @@ function stringArray(
 
   return value
     .filter(
-      (item): item is string =>
+      (
+        item
+      ): item is string =>
         typeof item === "string"
     )
-    .map((item) => item.trim())
+    .map(
+      (item) => item.trim()
+    )
     .filter(Boolean);
 }
 
 /**
  * Analyze a screenshot/image for scam indicators.
- *
- * Requires a vision-capable Ollama model.
  */
 export async function analyzeScamImage(
   input: string
 ): Promise<ImageScamAnalysis> {
-  if (!input || !input.trim()) {
+  if (
+    !input ||
+    !input.trim()
+  ) {
     throw new Error(
       "No image was provided for analysis."
     );
   }
 
-  const imageBase64 = input
-    .replace(
-      /^data:image\/[^;]+;base64,/i,
-      ""
-    )
-    .trim();
+  const imageBase64 =
+    input
+      .replace(
+        /^data:image\/[^;]+;base64,/i,
+        ""
+      )
+      .trim();
 
   if (!imageBase64) {
     throw new Error(
       "The uploaded image contains no usable image data."
     );
   }
-
-  const visionModel =
-    import.meta.env.VITE_OLLAMA_VISION_MODEL ||
-    "qwen3-vl:8b";
 
   const prompt = `
 You are SRG ScamCheck's forensic image-analysis engine.
@@ -386,17 +314,19 @@ Rules:
   let result = "";
 
   try {
-    result = await askOllama(
+    result = await askAI(
       prompt,
       [imageBase64],
-      visionModel
+      "vision"
     );
 
     const parsed =
       extractJson<any>(result);
 
     const riskScore =
-      clampScore(parsed.riskScore);
+      clampScore(
+        parsed.riskScore
+      );
 
     const confidence =
       clampScore(
@@ -427,7 +357,8 @@ Rules:
 
     return {
       isScam:
-        typeof parsed.isScam === "boolean"
+        typeof parsed.isScam ===
+        "boolean"
           ? parsed.isScam
           : riskScore >= 75,
 
@@ -436,18 +367,26 @@ Rules:
       confidence,
 
       intent:
-        typeof parsed.intent === "string" &&
+        typeof parsed.intent ===
+          "string" &&
         parsed.intent.trim()
           ? parsed.intent.trim()
           : "Suspicious content",
 
       redFlags:
-        stringArray(parsed.redFlags).length > 0
-          ? stringArray(parsed.redFlags)
-          : stringArray(parsed.indicators),
+        stringArray(
+          parsed.redFlags
+        ).length > 0
+          ? stringArray(
+              parsed.redFlags
+            )
+          : stringArray(
+              parsed.indicators
+            ),
 
       summary:
-        typeof parsed.summary === "string" &&
+        typeof parsed.summary ===
+          "string" &&
         parsed.summary.trim()
           ? parsed.summary.trim()
           : "Image analysis completed.",
@@ -463,12 +402,13 @@ Rules:
             parsed.technicalAnomalies
           ),
 
-        urgencyLevel: urgency,
+        urgencyLevel:
+          urgency,
       },
 
       educationalInsight:
         typeof parsed.educationalInsight ===
-          "string" &&
+            "string" &&
         parsed.educationalInsight.trim()
           ? parsed.educationalInsight.trim()
           : typeof parsed.recommendation ===
@@ -479,17 +419,7 @@ Rules:
     };
   } catch (error) {
     console.error(
-      "OLLAMA IMAGE ANALYSIS FAILED"
-    );
-
-    console.error(
-      "Vision model:",
-      visionModel
-    );
-
-    console.error(
-      "Raw model response:",
-      result
+      "IMAGE ANALYSIS FAILED"
     );
 
     throw error;
@@ -502,7 +432,8 @@ Rules:
 export async function analyzeWebsiteURL(
   url: string
 ): Promise<ScamAnalysis> {
-  const cleanUrl = url.trim();
+  const cleanUrl =
+    url.trim();
 
   if (!cleanUrl) {
     throw new Error(
@@ -510,7 +441,8 @@ export async function analyzeWebsiteURL(
     );
   }
 
-  const result = await askOllama(`
+  const result =
+    await askAI(`
 You are SRG ScamCheck's website-forensics AI.
 
 Analyze this URL for:
@@ -549,10 +481,14 @@ ${cleanUrl}
 `);
 
   const data =
-    extractJson<any>(result);
+    extractJson<any>(
+      result
+    );
 
   const riskScore =
-    clampScore(data.riskScore);
+    clampScore(
+      data.riskScore
+    );
 
   return {
     riskScore,
@@ -572,7 +508,9 @@ ${cleanUrl}
       "Website URL analysis completed.",
 
     indicators:
-      stringArray(data.indicators),
+      stringArray(
+        data.indicators
+      ),
 
     recommendation:
       data.recommendation ||
@@ -586,7 +524,8 @@ ${cleanUrl}
 export async function checkUPI(
   upi: string
 ): Promise<ScamAnalysis> {
-  const cleanUPI = upi.trim();
+  const cleanUPI =
+    upi.trim();
 
   if (!cleanUPI) {
     throw new Error(
@@ -594,7 +533,8 @@ export async function checkUPI(
     );
   }
 
-  const result = await askOllama(`
+  const result =
+    await askAI(`
 You are SRG ScamCheck's payment-fraud analysis engine.
 
 Analyze this UPI/VPA/payment identifier for:
@@ -625,10 +565,14 @@ ${cleanUPI}
 `);
 
   const data =
-    extractJson<any>(result);
+    extractJson<any>(
+      result
+    );
 
   const riskScore =
-    clampScore(data.riskScore);
+    clampScore(
+      data.riskScore
+    );
 
   return {
     riskScore,
@@ -648,7 +592,9 @@ ${cleanUPI}
       "Payment identifier analysis completed.",
 
     indicators:
-      stringArray(data.indicators),
+      stringArray(
+        data.indicators
+      ),
 
     recommendation:
       data.recommendation ||
@@ -657,11 +603,12 @@ ${cleanUPI}
 }
 
 /**
- * Analyze a voice-call transcript for scam/social-engineering indicators.
+ * Analyze a voice-call transcript for
+ * scam/social-engineering indicators.
  *
- * IMPORTANT:
- * This analyzes transcript content only.
- * It does NOT perform acoustic, spectral, biometric, or deepfake detection.
+ * Transcript analysis does not perform
+ * acoustic, spectral, biometric, or
+ * synthetic-voice detection.
  */
 export async function auditVoiceResult(
   transcript: string
@@ -673,13 +620,17 @@ export async function auditVoiceResult(
     anomalies: string[];
   }
 > {
-  const cleanTranscript = transcript.trim();
+  const cleanTranscript =
+    transcript.trim();
 
   if (!cleanTranscript) {
-    throw new Error("No voice transcript was provided.");
+    throw new Error(
+      "No voice transcript was provided."
+    );
   }
 
-  const result = await askOllama(`
+  const result =
+    await askAI(`
 You are SRG ScamCheck's voice-scam forensic analysis engine.
 
 Your task is to analyze ONLY the supplied voice-call transcript for
@@ -704,8 +655,8 @@ CRITICAL EVIDENCE RULES:
    as SAFE.
 8. Transcript text alone CANNOT determine whether a voice recording is
    AI-generated, cloned, synthetic, manipulated, or a deepfake.
-9. Never claim acoustic, spectral, biometric, waveform, or deepfake
-   detection was performed.
+9. Never claim acoustic, spectral, biometric, waveform, or synthetic
+   voice detection was performed.
 
 ANALYZE FOR THESE INDICATORS:
 
@@ -845,25 +796,37 @@ VOICE TRANSCRIPT:
 ${cleanTranscript}
 `);
 
-  const data = extractJson<any>(result);
+  const data =
+    extractJson<any>(
+      result
+    );
 
-  const riskScore = clampScore(data.riskScore);
+  const riskScore =
+    clampScore(
+      data.riskScore
+    );
 
-  const classification = normalizeClassification(
-    data.classification,
-    riskScore
-  );
+  const classification =
+    normalizeClassification(
+      data.classification,
+      riskScore
+    );
 
-  const indicators = stringArray(data.indicators);
+  const indicators =
+    stringArray(
+      data.indicators
+    );
 
   const summary =
-    typeof data.summary === "string" &&
+    typeof data.summary ===
+        "string" &&
     data.summary.trim()
       ? data.summary.trim()
       : "Voice transcript analysis completed.";
 
   const recommendation =
-    typeof data.recommendation === "string" &&
+    typeof data.recommendation ===
+        "string" &&
     data.recommendation.trim()
       ? data.recommendation.trim()
       : "Verify the caller independently before sharing information or sending money.";
@@ -874,7 +837,8 @@ ${cleanTranscript}
     classification,
 
     category:
-      typeof data.category === "string" &&
+      typeof data.category ===
+          "string" &&
       data.category.trim()
         ? data.category.trim()
         : "Voice scam",
@@ -885,24 +849,23 @@ ${cleanTranscript}
 
     recommendation,
 
-    // Transcript analysis cannot establish whether a recording
-    // is an AI-generated or cloned voice.
     isDeepfake: false,
 
-    // Do not falsely represent the scam risk score as a
-    // deepfake probability.
     probability: 0,
 
     verdict:
       classification === "SCAM"
         ? "High-confidence scam indicators detected."
-        : classification === "SUSPICIOUS"
+        : classification ===
+            "SUSPICIOUS"
           ? "Suspicious indicators detected; independent verification is recommended."
           : "No significant scam indicators detected in the transcript.",
 
-    anomalies: indicators,
+    anomalies:
+      indicators,
   };
 }
+
 /**
  * Analyze employment/company information.
  */
@@ -918,7 +881,8 @@ export async function verifyFirm(
     );
   }
 
-  const result = await askOllama(`
+  const result =
+    await askAI(`
 You are SRG ScamCheck's employment-scam forensic engine.
 
 Analyze the supplied information for:
@@ -961,10 +925,14 @@ ${cleanDetails}
 `);
 
   const data =
-    extractJson<any>(result);
+    extractJson<any>(
+      result
+    );
 
   const riskScore =
-    clampScore(data.riskScore);
+    clampScore(
+      data.riskScore
+    );
 
   return {
     riskScore,
@@ -984,7 +952,9 @@ ${cleanDetails}
       "Employment information analysis completed.",
 
     indicators:
-      stringArray(data.indicators),
+      stringArray(
+        data.indicators
+      ),
 
     recommendation:
       data.recommendation ||
@@ -1007,7 +977,7 @@ export async function generateVerificationEmail(
     );
   }
 
-  return askOllama(`
+  return askAI(`
 Write a professional verification email based ONLY on the
 following context.
 

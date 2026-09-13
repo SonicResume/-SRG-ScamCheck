@@ -7,31 +7,67 @@ dotenv.config();
 const app = express();
 
 // =========================
+// CONFIG
+// =========================
+const PORT = process.env.PORT || 5000;
+const OLLAMA_API_URL = process.env.OLLAMA_API_URL;
+const OLLAMA_MODEL =
+  process.env.OLLAMA_MODEL ||
+  "pdurugyan/qwen3.5-9b-deepseek-v4-flash-Q4_K_M:latest";
+
+if (!OLLAMA_API_URL) {
+  console.warn("⚠️ OLLAMA_API_URL is not configured");
+}
+
+// =========================
 // SECURITY + MIDDLEWARE
 // =========================
-app.use(cors({
-  origin: "*",
-  methods: ["GET", "POST"]
-}));
+const allowedOrigin = process.env.FRONTEND_URL || "*";
 
-app.use(express.json({ limit: "10kb" }));
+app.use(
+  cors({
+    origin: allowedOrigin,
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+  })
+);
+
+app.use(express.json({ limit: "15mb" }));
 
 // =========================
 // HEALTH CHECK
 // =========================
+app.get("/", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    service: "SRG ScamCheck backend"
+  });
+});
+
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    service: "SRG ScamCheck backend"
+  });
+});
+
 app.get("/test", (req, res) => {
-  res.json({ status: "SRG ScamCheck backend is live 🚀" });
+  res.status(200).json({
+    status: "SRG ScamCheck backend is live 🚀"
+  });
 });
 
 // =========================
-// 🧠 SCAM DETECTION
+// SCAM DETECTION
 // =========================
 app.post("/api/analyze", (req, res) => {
   try {
     const { text } = req.body;
 
-    if (!text) {
-      return res.status(400).json({ error: "No text provided" });
+    if (typeof text !== "string" || !text.trim()) {
+      return res.status(400).json({
+        error: "No text provided"
+      });
     }
 
     let label = "Safe";
@@ -62,76 +98,116 @@ app.post("/api/analyze", (req, res) => {
       reason = "Looks promotional or risky.";
     }
 
-    return res.json({ label, probability, reason });
-
+    return res.json({
+      label,
+      probability,
+      reason
+    });
   } catch (err) {
     console.error("Analyze error:", err);
-    return res.status(500).json({ error: "Internal server error" });
+
+    return res.status(500).json({
+      error: "Internal server error"
+    });
   }
 });
 
 // =========================
-// 🔗 URL CHECKER
+// URL CHECKER
 // =========================
 app.post("/api/check-url", (req, res) => {
   try {
     const { url } = req.body;
 
-    if (!url) {
-      return res.status(400).json({ error: "No URL provided" });
+    if (typeof url !== "string" || !url.trim()) {
+      return res.status(400).json({
+        error: "No URL provided"
+      });
     }
 
-    const lowerUrl = url.toLowerCase();
+    const cleanUrl = url.trim();
+    const lowerUrl = cleanUrl.toLowerCase();
 
     let riskScore = 20;
     let label = "Safe";
-    let reasons = [];
+    const reasons = [];
 
     if (["bit.ly", "tinyurl", "goo.gl"].some(x => lowerUrl.includes(x))) {
       riskScore += 30;
       reasons.push("Shortened URL detected.");
     }
 
-    if (["login", "verify", "secure"].some(x => lowerUrl.includes(x))) {
+    if (
+      ["login", "verify", "secure"].some(x =>
+        lowerUrl.includes(x)
+      )
+    ) {
       riskScore += 20;
       reasons.push("Suspicious login/verification terms.");
     }
 
-    if (["paypal", "bank", "amazon"].some(x => lowerUrl.includes(x))) {
+    if (
+      ["paypal", "bank", "amazon"].some(x =>
+        lowerUrl.includes(x)
+      )
+    ) {
       riskScore += 20;
       reasons.push("Possible brand impersonation.");
     }
 
-    if (["alert", "account"].some(x => lowerUrl.includes(x))) {
+    if (
+      ["alert", "account"].some(x =>
+        lowerUrl.includes(x)
+      )
+    ) {
       riskScore += 10;
       reasons.push("Urgency-related wording detected.");
     }
 
-    if (riskScore >= 70) label = "Scam";
-    else if (riskScore >= 45) label = "Suspicious";
+    if (riskScore >= 70) {
+      label = "Scam";
+    } else if (riskScore >= 45) {
+      label = "Suspicious";
+    }
 
     return res.json({
-      url,
+      url: cleanUrl,
       label,
       risk_score: Math.min(riskScore, 100),
-      reasons: reasons.length ? reasons : ["No strong threats detected."]
+      reasons: reasons.length
+        ? reasons
+        : ["No strong threats detected."]
     });
-
   } catch (err) {
     console.error("URL error:", err);
-    return res.status(500).json({ error: "URL analysis failed" });
+
+    return res.status(500).json({
+      error: "URL analysis failed"
+    });
   }
 });
 
 // =========================
-// 📩 FEEDBACK
+// FEEDBACK
 // =========================
 app.post("/api/feedback", (req, res) => {
   try {
-    const { input_data, original_label, user_label, type } = req.body;
+    const {
+      input_data,
+      original_label,
+      user_label,
+      type
+    } = req.body;
 
-    if (!input_data || !original_label || !user_label || !type) {
-      return res.status(400).json({ error: "Missing feedback payload" });
+    if (
+      !input_data ||
+      !original_label ||
+      !user_label ||
+      !type
+    ) {
+      return res.status(400).json({
+        error: "Missing feedback payload"
+      });
     }
 
     console.log("📩 Feedback received:", {
@@ -142,19 +218,263 @@ app.post("/api/feedback", (req, res) => {
       time: new Date().toISOString()
     });
 
-    return res.json({ success: true });
-
+    return res.json({
+      success: true
+    });
   } catch (err) {
     console.error("Feedback error:", err);
-    return res.status(500).json({ error: "Failed to save feedback" });
+
+    return res.status(500).json({
+      error: "Failed to save feedback"
+    });
   }
 });
 
 // =========================
-// 🚀 START SERVER
+// PRIVATE AI PROXY
 // =========================
-const PORT = process.env.PORT || 5000;
+// The browser sends ONLY:
+//   prompt
+//   images
+//   type
+//
+// The browser NEVER supplies:
+//   model
+//   Ollama URL
+//
+// The backend chooses the model privately.
+// =========================
+app.post("/api/ai", async (req, res) => {
+  try {
+    if (!OLLAMA_API_URL) {
+      return res.status(503).json({
+        error: "AI service is not configured"
+      });
+    }
 
+    const {
+      prompt,
+      images = [],
+      type = "text"
+    } = req.body;
+
+    if (typeof prompt !== "string" || !prompt.trim()) {
+      return res.status(400).json({
+        error: "Missing prompt"
+      });
+    }
+
+    if (type !== "text" && type !== "vision") {
+      return res.status(400).json({
+        error: "Invalid AI request type"
+      });
+    }
+
+    const cleanImages = Array.isArray(images)
+      ? images
+          .filter(
+            image =>
+              typeof image === "string" &&
+              image.length > 0
+          )
+          .map(image =>
+            image.replace(
+              /^data:image\/[^;]+;base64,/i,
+              ""
+            )
+          )
+      : [];
+
+    const controller = new AbortController();
+
+    const timeout = setTimeout(() => {
+      controller.abort();
+    }, 120000);
+
+    try {
+      const response = await fetch(
+        `${OLLAMA_API_URL.replace(/\/$/, "")}/api/generate`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify({
+            model: OLLAMA_MODEL,
+            prompt: prompt.trim(),
+            stream: false,
+            ...(cleanImages.length
+              ? { images: cleanImages }
+              : {})
+          }),
+          signal: controller.signal
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+
+        console.error(
+          "Private AI service error:",
+          response.status,
+          errorText
+        );
+
+        return res.status(502).json({
+          error: "AI analysis service unavailable"
+        });
+      }
+
+      const data = await response.json();
+
+      return res.json({
+        response:
+          typeof data.response === "string"
+            ? data.response
+            : ""
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
+  } catch (err) {
+    console.error("Private AI proxy error:", err);
+
+    if (err.name === "AbortError") {
+      return res.status(504).json({
+        error: "AI analysis timed out"
+      });
+    }
+
+    return res.status(502).json({
+      error: "AI analysis service unavailable"
+    });
+  }
+});
+
+// =========================
+// LEGACY OLLAMA ENDPOINT
+// =========================
+// Kept for compatibility.
+// Model is now controlled by the backend.
+// =========================
+app.post("/api/ollama", async (req, res) => {
+  try {
+    if (!OLLAMA_API_URL) {
+      return res.status(503).json({
+        error: "Ollama analysis server is not configured"
+      });
+    }
+
+    const {
+      prompt,
+      stream = false,
+      images
+    } = req.body;
+
+    if (typeof prompt !== "string" || !prompt.trim()) {
+      return res.status(400).json({
+        error: "Missing prompt"
+      });
+    }
+
+    const cleanImages = Array.isArray(images)
+      ? images
+          .filter(
+            image =>
+              typeof image === "string" &&
+              image.length > 0
+          )
+          .map(image =>
+            image.replace(
+              /^data:image\/[^;]+;base64,/i,
+              ""
+            )
+          )
+      : [];
+
+    const controller = new AbortController();
+
+    const timeout = setTimeout(() => {
+      controller.abort();
+    }, 120000);
+
+    try {
+      const response = await fetch(
+        `${OLLAMA_API_URL.replace(/\/$/, "")}/api/generate`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify({
+            model: OLLAMA_MODEL,
+            prompt: prompt.trim(),
+            stream,
+            ...(cleanImages.length
+              ? { images: cleanImages }
+              : {})
+          }),
+          signal: controller.signal
+        }
+      );
+
+      const contentType =
+        response.headers.get("content-type") || "";
+
+      if (contentType.includes("application/json")) {
+        const data = await response.json();
+
+        return res.status(response.status).json(data);
+      }
+
+      const text = await response.text();
+
+      return res.status(response.status).send(text);
+    } finally {
+      clearTimeout(timeout);
+    }
+  } catch (err) {
+    console.error("Ollama proxy error:", err);
+
+    if (err.name === "AbortError") {
+      return res.status(504).json({
+        error: "Ollama analysis server timed out"
+      });
+    }
+
+    return res.status(502).json({
+      error: "Unable to connect to Ollama analysis server"
+    });
+  }
+});
+
+// =========================
+// 404 HANDLER
+// =========================
+app.use((req, res) => {
+  res.status(404).json({
+    error: "Endpoint not found"
+  });
+});
+
+// =========================
+// GLOBAL ERROR HANDLER
+// =========================
+app.use((err, req, res, next) => {
+  console.error("Unhandled server error:", err);
+
+  res.status(500).json({
+    error: "Internal server error"
+  });
+});
+
+// =========================
+// START SERVER
+// =========================
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`🚀 SRG ScamCheck running on port ${PORT}`);
+  console.log(
+    `🚀 SRG ScamCheck running on port ${PORT}`
+  );
 });
