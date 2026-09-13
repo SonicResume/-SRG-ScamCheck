@@ -27,6 +27,13 @@ const OLLAMA_VISION_MODEL =
   process.env.OLLAMA_VISION_MODEL ||
   "qwen3-vl:8b";
 
+const VOICE_API_URL =
+  process.env.VOICE_API_URL;
+
+if (!VOICE_API_URL) {
+  console.warn("⚠️ VOICE_API_URL is not configured");
+}
+
 if (!OLLAMA_API_URL) {
   console.warn("⚠️ OLLAMA_API_URL is not configured");
 }
@@ -82,12 +89,78 @@ app.post("/api/analyze", upload.single("audio"), async (req, res) => {
         mimetype: req.file.mimetype
       });
 
-      return res.status(501).json({
-        error: "Audio received successfully, but transcription is not configured yet.",
-        filename: req.file.originalname,
-        size: req.file.size,
-        mimetype: req.file.mimetype
-      });
+      if (!VOICE_API_URL) {
+        return res.status(503).json({
+          error: "Voice analysis service is not configured"
+        });
+      }
+
+      const voiceEndpoint =
+        `${VOICE_API_URL.replace(/\\/$/, "")}/api/analyze-audio`;
+
+      console.log("Forwarding audio to:", voiceEndpoint);
+
+      const formData = new FormData();
+
+      formData.append(
+        "audio",
+        new Blob(
+          [req.file.buffer],
+          {
+            type:
+              req.file.mimetype ||
+              "application/octet-stream"
+          }
+        ),
+        req.file.originalname
+      );
+
+      const controller = new AbortController();
+
+      const timeout = setTimeout(() => {
+        controller.abort();
+      }, 120000);
+
+      try {
+        const voiceResponse = await fetch(
+          voiceEndpoint,
+          {
+            method: "POST",
+            body: formData,
+            signal: controller.signal
+          }
+        );
+
+        const contentType =
+          voiceResponse.headers.get("content-type") || "";
+
+        const voiceData =
+          contentType.includes("application/json")
+            ? await voiceResponse.json()
+            : {
+                response: await voiceResponse.text()
+              };
+
+        console.log(
+          "Voice API status:",
+          voiceResponse.status
+        );
+
+        if (!voiceResponse.ok) {
+          console.error("Voice API error:", voiceData);
+
+          return res.status(voiceResponse.status).json({
+            error:
+              voiceData?.error ||
+              voiceData?.detail ||
+              "Voice analysis failed"
+          });
+        }
+
+        return res.json(voiceData);
+      } finally {
+        clearTimeout(timeout);
+      }
     }
 
     // -------------------------

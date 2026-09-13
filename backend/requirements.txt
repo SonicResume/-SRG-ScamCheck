@@ -4,3 +4,4 @@ fastapi
 uvicorn
 python-multipart
 flask-cors
+faster-whisper

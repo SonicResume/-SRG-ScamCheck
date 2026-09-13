@@ -8,6 +8,7 @@ import re
 import tempfile
 from datetime import datetime, timezone
 from urllib.parse import urlparse
+from faster_whisper import WhisperModel
 
 
 # ============================================================
@@ -24,6 +25,31 @@ FEEDBACK_FILE = os.path.join(BASE_DIR, "feedback.json")
 
 MAX_TEXT_LENGTH = 10000
 MAX_URL_LENGTH = 2048
+
+WHISPER_MODEL_SIZE = os.getenv("WHISPER_MODEL_SIZE", "small")
+WHISPER_DEVICE = os.getenv("WHISPER_DEVICE", "cuda")
+WHISPER_COMPUTE_TYPE = os.getenv("WHISPER_COMPUTE_TYPE", "float16")
+
+transcriber = WhisperModel(
+    WHISPER_MODEL_SIZE,
+    device=WHISPER_DEVICE,
+    compute_type=WHISPER_COMPUTE_TYPE,
+)
+
+def transcribe_audio(path):
+    segments, info = transcriber.transcribe(
+        path,
+        beam_size=5,
+        vad_filter=True,
+    )
+    return {
+        "transcript": " ".join(
+            x.text.strip() for x in segments if x.text.strip()
+        ),
+        "language": info.language,
+        "language_probability": round(float(info.language_probability), 4),
+    }
+
 
 
 # ============================================================
@@ -193,11 +219,20 @@ async def analyze_audio(audio: UploadFile = File(...)):
         with open(temp_path, "wb") as f:
             f.write(audio_bytes)
 
+        transcription = transcribe_audio(temp_path)
+
+        if not transcription["transcript"]:
+            raise HTTPException(
+                status_code=422,
+                detail="No speech could be detected in the audio.",
+            )
+
         result = voice_model.predict_file(temp_path)
 
         return {
             "filename": audio.filename,
             "mimetype": audio.content_type,
+            **transcription,
             **result,
         }
 
