@@ -6,6 +6,7 @@ import os
 import pickle
 import re
 import tempfile
+import subprocess
 from datetime import datetime, timezone
 from urllib.parse import urlparse
 from faster_whisper import WhisperModel
@@ -35,6 +36,32 @@ transcriber = WhisperModel(
     device=WHISPER_DEVICE,
     compute_type=WHISPER_COMPUTE_TYPE,
 )
+
+VIDEO_EXTENSIONS = {".mp4", ".mov", ".mkv", ".webm"}
+
+def normalize_for_transcription(input_path, suffix):
+    if suffix not in VIDEO_EXTENSIONS:
+        return input_path, None
+
+    fd, output_path = tempfile.mkstemp(suffix=".wav")
+    os.close(fd)
+
+    subprocess.run(
+        [
+            "ffmpeg",
+            "-y",
+            "-i", input_path,
+            "-ac", "1",
+            "-ar", "16000",
+            output_path,
+        ],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        check=True,
+    )
+
+    return output_path, output_path
+
 
 def transcribe_audio(path):
     segments, info = transcriber.transcribe(
@@ -191,6 +218,9 @@ async def analyze_audio(audio: UploadFile = File(...)):
         ".m4a",
         ".ogg",
         ".webm",
+        ".mp4",
+        ".mov",
+        ".mkv",
     }
 
     if suffix not in allowed_extensions:
@@ -203,6 +233,7 @@ async def analyze_audio(audio: UploadFile = File(...)):
         )
 
     temp_path = None
+    normalized_path = None
 
     try:
         audio_bytes = await audio.read()
@@ -219,7 +250,12 @@ async def analyze_audio(audio: UploadFile = File(...)):
         with open(temp_path, "wb") as f:
             f.write(audio_bytes)
 
-        transcription = transcribe_audio(temp_path)
+        transcription_path, normalized_path = normalize_for_transcription(
+            temp_path,
+            suffix,
+        )
+
+        transcription = transcribe_audio(transcription_path)
 
         if not transcription["transcript"]:
             raise HTTPException(
@@ -247,11 +283,12 @@ async def analyze_audio(audio: UploadFile = File(...)):
         )
 
     finally:
-        if temp_path and os.path.exists(temp_path):
-            try:
-                os.remove(temp_path)
-            except OSError:
-                pass
+        for cleanup_path in (normalized_path, temp_path):
+            if cleanup_path and os.path.exists(cleanup_path):
+                try:
+                    os.remove(cleanup_path)
+                except OSError:
+                    pass
 
 @app.get("/")
 def read_root():
