@@ -1,3 +1,4 @@
+from faster_whisper import WhisperModel
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
@@ -9,8 +10,7 @@ import tempfile
 import subprocess
 from datetime import datetime, timezone
 from urllib.parse import urlparse
-from faster_whisper import WhisperModel
-
+from voice_model import voice_model
 
 # ============================================================
 # CONFIGURATION
@@ -98,7 +98,7 @@ def transcribe_audio(path):
 # ============================================================
 # APP
 # ============================================================
-from backend.voice_model import voice_model
+from voice_model import voice_model
 
 
 app = FastAPI(
