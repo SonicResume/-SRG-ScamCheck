@@ -1,9 +1,3 @@
-# -SRG-ScamCheck
-
-**Commercial Scam Detection & Investigation Platform**
-
--SRG-ScamCheck is a commercial platform designed to help users investigate potentially suspicious websites, messages, payment information, and other scam-related activity.
-
 ## Production Status
 
 **Production-ready application**
@@ -15,22 +9,11 @@ The platform is designed for production deployment with:
 * Python backend services
 * Firebase integration
 * AI-assisted scam analysis
-* Ollama-compatible AI inference
+* Backend-powered AI inference
 * Render backend deployment
-* Stripe billing integration
+* Separate billing service
 * Environment-based configuration
 * Proprietary commercial licensing
-
-## Features
-
-* Website and URL investigation
-* Message and text analysis
-* Scam and fraud investigation
-* Payment and UPI-related checks
-* AI-assisted investigation
-* Backend-powered analysis services
-* Production billing infrastructure
-* Secure environment-based configuration
 
 ## Technology Stack
 
@@ -50,15 +33,14 @@ The platform is designed for production deployment with:
 
 ### AI
 
-* Ollama-compatible API
-* Qwen-based AI model
+* Backend-powered AI inference
 * AI-assisted scam investigation
 
 ### Infrastructure
 
 * Firebase
 * Render
-* Stripe
+* External billing service
 
 ## Production Architecture
 
@@ -72,9 +54,13 @@ Python Backend API
 AI / Investigation Services
   ↓
 Firebase / External Services
+
+Separate Billing Service
+  ↓
+Stripe Payment Infrastructure
 ```
 
-Billing is handled through the application's Stripe payment infrastructure.
+Billing is handled through a **separate backend billing service** using Stripe payment infrastructure. The billing service is separate from the -SRG-ScamCheck application backend.
 
 ## Environment Configuration
 
@@ -106,47 +92,4 @@ Backend dependencies are defined in:
 backend/requirements.txt
 ```
 
-Large voice-model files are intentionally excluded from Git because GitHub's standard Git file-size limit does not support files of that size.
-
-## Commercial Software
-
--SRG-ScamCheck is proprietary commercial software.
-
-Commercial use, redistribution, resale, sublicensing, modification for commercial distribution, or incorporation into another commercial product requires written authorization and an applicable commercial license.
-
-See `LICENSE` for the complete proprietary license.
-
-## Legal
-
-The production application provides:
-
-* Terms of Service
-* Privacy Policy
-* Contact / Support information
-* Billing and cancellation information
-
-Use of the service is subject to the applicable Terms of Service and Privacy Policy.
-
-## No-Refund Policy
-
-Payments for the service are **non-refundable**, except where a refund is required by applicable law or expressly approved by the service provider.
-
-The applicable billing terms are presented to users before purchase.
-
-## Contact
-
-For support, commercial licensing, partnerships, or other inquiries, use the official -SRG-ScamCheck contact page.
-
-## Disclaimer
-
--SRG-ScamCheck is intended to assist with scam and fraud investigation.
-
-Automated analysis may be inaccurate, incomplete, or unavailable in some circumstances. Results should not be treated as guaranteed determinations of fraud, identity, legality, or financial loss.
-
-Users remain responsible for decisions made based on information provided by the service.
-
-## License
-
-**Proprietary Software — All Rights Reserved.**
-
-See `LICENSE` for the complete commercial license terms.
+The application does not use voice or voice-upload functionality.
