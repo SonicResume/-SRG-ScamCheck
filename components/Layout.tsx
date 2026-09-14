@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shield, LayoutDashboard, Scan, Search, Mic, Building2, Settings, LogOut, ShieldCheck, Bell, History, HelpCircle, Search as SearchIcon, Globe, Activity, Menu, X } from 'lucide-react';
+import { Shield, LayoutDashboard, Scan, Search, Building2, Settings, LogOut, ShieldCheck, Bell, History, HelpCircle, Search as SearchIcon, Globe, Activity, Menu, X } from 'lucide-react';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -19,7 +19,6 @@ const Layout: React.FC<LayoutProps> = ({ children, activePage, onNavigate, user,
     { id: 'scanner', label: 'Threat Intellegence', icon: Scan, color: 'text-teal-700 bg-teal-100/70 border-teal-200' },
     { id: 'website', label: 'Domain', icon: Globe, color: 'text-emerald-700 bg-emerald-100/70 border-emerald-200' },
     { id: 'upi', label: 'Payee', icon: Search, color: 'text-sky-700 bg-sky-100/70 border-sky-200' },
-    { id: 'voice', label: 'Voice', icon: Mic, color: 'text-rose-700 bg-rose-100/70 border-rose-200' },
     { id: 'ghostfirm', label: 'Ghost-Firm', icon: Building2, color: 'text-violet-700 bg-violet-100/70 border-violet-200' },
     { id: 'history', label: 'Archives', icon: History, color: 'text-amber-800 bg-amber-100/70 border-amber-200' },
   ];
@@ -28,7 +27,6 @@ const Layout: React.FC<LayoutProps> = ({ children, activePage, onNavigate, user,
     { id: 'dashboard', icon: LayoutDashboard, label: 'Home' },
     { id: 'scanner', icon: Scan, label: 'Scan' },
     { id: 'upi', icon: Search, label: 'Pay' },
-    { id: 'voice', icon: Mic, label: 'Voice' },
     { id: 'profile', icon: ShieldCheck, label: 'Me' },
   ];
 
