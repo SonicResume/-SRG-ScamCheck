@@ -72,6 +72,7 @@ async function askAI(
         type: cleanImages.length > 0 ? "vision" : "text",
         prompt,
         stream: false,
+        think: false,
         ...(cleanImages.length
           ? { images: cleanImages }
           : {}),
