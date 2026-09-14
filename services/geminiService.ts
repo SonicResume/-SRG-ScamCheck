@@ -63,7 +63,6 @@ async function askOllama(
 
   console.log("OLLAMA REQUEST", {
     endpoint,
-    model,
     hasImages: cleanImages.length > 0,
     imageCount: cleanImages.length,
   });
@@ -79,7 +78,6 @@ async function askOllama(
       },
       body: JSON.stringify({
         type: cleanImages.length > 0 ? "vision" : "text",
-        model,
         prompt,
         stream: false,
         ...(cleanImages.length
