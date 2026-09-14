@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import {
-  Building2,
+  FileSearch,
   ShieldAlert,
   CheckCircle2,
   Loader2,
   Download,
-  AlertTriangle,
-  FileSearch
+  AlertTriangle
 } from 'lucide-react';
 import { verifyFirm } from '../services/geminiService';
 import { FirmAnalysisResult } from '../types';
@@ -143,7 +142,7 @@ const GhostFirmVerifier: React.FC<GhostFirmVerifierProps> = ({
       <div className="bg-gradient-to-br from-[#ffffff] via-[#faf7f0] to-[#f4f0e6] border border-[#e2ddd0] p-8 md:p-10 rounded-3xl text-center space-y-6 relative overflow-hidden shadow-xs">
 
         <div className="w-16 h-16 bg-[#f0ece1] rounded-2xl flex items-center justify-center mx-auto border border-[#dcd7c8] text-indigo-900 shadow-2xs">
-          <Building2 size={32} />
+          <FileSearch size={32} />
         </div>
 
         <div>
@@ -221,7 +220,7 @@ const GhostFirmVerifier: React.FC<GhostFirmVerifierProps> = ({
             className={`px-6 py-4 flex items-center justify-between border-b ${
               result.isGhostFirm
                 ? 'bg-rose-100/90 border-rose-300'
-                : 'bg-emerald-100/90 border-emerald-300'
+                : 'bg-sky-100/90 border-sky-300'
             }`}
           >
             <div className="flex items-center gap-3">
@@ -229,14 +228,14 @@ const GhostFirmVerifier: React.FC<GhostFirmVerifierProps> = ({
               {result.isGhostFirm ? (
                 <ShieldAlert className="text-rose-800" />
               ) : (
-                <CheckCircle2 className="text-emerald-800" />
+                <CheckCircle2 className="text-sky-800" />
               )}
 
               <span
                 className={`font-black uppercase tracking-wider text-xs ${
                   result.isGhostFirm
                     ? 'text-rose-950'
-                    : 'text-emerald-950'
+                    : 'text-sky-950'
                 }`}
               >
                 {result.isGhostFirm
@@ -293,7 +292,7 @@ const GhostFirmVerifier: React.FC<GhostFirmVerifierProps> = ({
                           ? 'bg-amber-200 text-amber-950'
                           : result.riskRating === 'Suspect'
                             ? 'bg-indigo-100 text-indigo-950'
-                            : 'bg-emerald-200 text-emerald-950'
+                            : 'bg-sky-200 text-sky-950'
                     }`}
                   >
                     {result.riskRating}
@@ -309,7 +308,7 @@ const GhostFirmVerifier: React.FC<GhostFirmVerifierProps> = ({
                             ? 'bg-amber-600 w-[75%]'
                             : result.riskRating === 'Suspect'
                               ? 'bg-indigo-700 w-[40%]'
-                              : 'bg-emerald-600 w-[10%]'
+                              : 'bg-sky-600 w-[10%]'
                       }`}
                     />
 

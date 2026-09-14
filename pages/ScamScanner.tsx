@@ -156,7 +156,7 @@ const ScamScanner: React.FC<ScamScannerProps> = ({ onResult }) => {
               onClick={() => {setScanMode('text'); setScamResult(null);}}
               className={`px-5 py-2.5 rounded-xl border font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 ${scanMode === 'text' ? 'bg-[#ffffff] border-indigo-700 text-indigo-950 shadow-2xs' : 'bg-[#f0ece1] border-[#dcd7c8] text-slate-800 hover:bg-[#eae5d7]'}`}
             >
-              <MessageSquareCode size={16} className="text-teal-800" /> TEXT
+              <MessageSquareCode size={16} className="text-sky-800" /> TEXT
             </button>
           </div>
 
@@ -215,16 +215,16 @@ const ScamScanner: React.FC<ScamScannerProps> = ({ onResult }) => {
       {scamResult && (
         <div className="animate-in slide-in-from-bottom-8 duration-500">
           <div className={`p-8 md:p-10 rounded-[2rem] border shadow-md ${
-            scamResult.isScam ? 'border-rose-400 bg-rose-100/90' : 'border-emerald-400 bg-emerald-100/90'
+            scamResult.isScam ? 'border-rose-400 bg-rose-100/90' : 'border-sky-400 bg-sky-100/90'
           }`}>
             <div className="space-y-8 relative overflow-hidden">
               <div className="flex flex-col md:flex-row gap-6 items-start justify-between border-b border-slate-300/60 pb-6">
                 <div className="flex items-center gap-5">
-                  <div className={`p-4 rounded-2xl shrink-0 ${scamResult.isScam ? 'bg-rose-200 text-rose-950' : 'bg-emerald-200 text-emerald-950'}`}>
+                  <div className={`p-4 rounded-2xl shrink-0 ${scamResult.isScam ? 'bg-rose-200 text-rose-950' : 'bg-sky-200 text-sky-950'}`}>
                     {scamResult.isScam ? <ShieldAlert size={48} /> : <CheckCircle2 size={48} />}
                   </div>
                   <div>
-                     <span className={`text-[10px] font-black uppercase px-3 py-1 rounded-full border ${scamResult.isScam ? 'bg-rose-200 text-rose-950 border-rose-400' : 'bg-emerald-200 text-emerald-950 border-emerald-400'}`}>
+                     <span className={`text-[10px] font-black uppercase px-3 py-1 rounded-full border ${scamResult.isScam ? 'bg-rose-200 text-rose-950 border-rose-400' : 'bg-sky-200 text-sky-950 border-sky-400'}`}>
                        VERDICT: {scamResult.isScam ? 'SCAM DETECTED' : 'CLEAN / SAFE'}
                      </span>
                      <h2 className="text-2xl md:text-3xl font-black text-slate-950 uppercase tracking-tight italic mt-2">

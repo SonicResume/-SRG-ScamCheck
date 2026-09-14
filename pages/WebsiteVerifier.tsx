@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Globe, ShieldAlert, CheckCircle2, Loader2, Download, Search, Link as LinkIcon, AlertTriangle, ShieldCheck, Activity, Terminal, ExternalLink, Fingerprint, Lock, Unlock, Database } from 'lucide-react';
+import { ScanSearch, ShieldAlert, CheckCircle2, Loader2, Download, Search, Link as LinkIcon, AlertTriangle, ShieldCheck, Activity, Terminal, ExternalLink, Fingerprint, Lock, Unlock, Database } from 'lucide-react';
 import { analyzeWebsiteURL } from '../services/geminiService';
 import { WebsiteAnalysisResult } from '../types';
 import jsPDF from 'jspdf';
@@ -89,10 +89,10 @@ const WebsiteVerifier: React.FC<WebsiteVerifierProps> = ({ onResult }) => {
       {/* Search Header */}
       <div className="bg-gradient-to-br from-[#ffffff] via-[#faf7f0] to-[#f4f0e6] border border-[#e2ddd0] p-10 rounded-[3rem] text-center space-y-8 relative overflow-hidden shadow-xs">
         <div className="relative z-10 space-y-4">
-          <div className="w-20 h-20 bg-[#f0ece1] rounded-3xl flex items-center justify-center mx-auto border border-[#dcd7c8] text-teal-900 shadow-2xs">
-            <Globe className="w-10 h-10" />
+          <div className="w-20 h-20 bg-[#f0ece1] rounded-3xl flex items-center justify-center mx-auto border border-[#dcd7c8] text-sky-900 shadow-2xs">
+            <ScanSearch className="w-10 h-10" />
           </div>
-          <h3 className="text-3xl font-black text-slate-950 italic tracking-tighter uppercase">URL <span className="text-teal-800">Forensics</span></h3>
+          <h3 className="text-3xl font-black text-slate-950 italic tracking-tighter uppercase">URL <span className="text-sky-800">Forensics</span></h3>
           <p className="text-slate-700 max-w-lg mx-auto font-bold">
             Verify payment portals, login pages, and student links. Our engine detects <span className="text-slate-950 font-black">Homograph Attacks</span> and <span  className="text-slate-950 font-black">Spoofed UI</span> patterns.
           </p>
@@ -100,7 +100,7 @@ const WebsiteVerifier: React.FC<WebsiteVerifierProps> = ({ onResult }) => {
 
         <form onSubmit={handleVerify} className="relative max-w-2xl mx-auto group z-10">
           <div className="relative">
-            <LinkIcon className="absolute left-6 top-1/2 -translate-y-1/2 text-teal-900 group-focus-within:text-indigo-800 transition-colors" size={20} />
+            <LinkIcon className="absolute left-6 top-1/2 -translate-y-1/2 text-sky-900 group-focus-within:text-indigo-800 transition-colors" size={20} />
             <input 
               type="text" 
               placeholder="Enter suspicious URL (e.g., pαypal.com)..."
@@ -112,7 +112,7 @@ const WebsiteVerifier: React.FC<WebsiteVerifierProps> = ({ onResult }) => {
           <button 
             type="submit"
             disabled={isAnalyzing || !url}
-            className="absolute right-3 top-3 bottom-3 px-8 bg-teal-800 hover:bg-teal-700 text-white font-black rounded-2xl flex items-center gap-2 transition-all disabled:opacity-50 shadow-md active:scale-95 text-xs uppercase tracking-wider"
+            className="absolute right-3 top-3 bottom-3 px-8 bg-sky-800 hover:bg-sky-700 text-white font-black rounded-2xl flex items-center gap-2 transition-all disabled:opacity-50 shadow-md active:scale-95 text-xs uppercase tracking-wider"
           >
             {isAnalyzing ? <Loader2 className="animate-spin w-5 h-5" /> : <>WEBSITE AUDIT<Search size={18} /></>}
           </button>
@@ -125,7 +125,7 @@ const WebsiteVerifier: React.FC<WebsiteVerifierProps> = ({ onResult }) => {
            <div className="flex flex-col items-center justify-center space-y-6">
               <div className="relative">
                  <div className="w-24 h-24 border-4 border-indigo-800/20 border-t-indigo-800 rounded-full animate-spin" />
-                 <Globe className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-indigo-900" size={32} />
+                 <ScanSearch className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-indigo-900" size={32} />
               </div>
               <div className="text-center space-y-2">
                 <p className="text-indigo-950 font-black tracking-[0.2em] animate-pulse uppercase text-sm">Intercepting Network Packets</p>
@@ -147,17 +147,17 @@ const WebsiteVerifier: React.FC<WebsiteVerifierProps> = ({ onResult }) => {
       {/* Result UI */}
       {result && !isAnalyzing && (
         <div className={`p-10 rounded-[3rem] border shadow-md animate-in zoom-in duration-500 ${
-           result.isPhishing ? 'border-rose-400 bg-rose-100/90' : 'border-emerald-400 bg-emerald-100/90'
+           result.isPhishing ? 'border-rose-400 bg-rose-100/90' : 'border-sky-400 bg-sky-100/90'
         }`}>
           <div className="space-y-12 relative overflow-hidden">
              {/* Top Banner Verdict */}
              <div className="flex flex-col md:flex-row gap-8 items-start relative z-10">
-                <div className={`p-6 rounded-[2.5rem] shadow-sm shrink-0 ${result.isPhishing ? 'bg-rose-200 text-rose-950 border border-rose-300' : 'bg-emerald-200 text-emerald-950 border border-emerald-300'}`}>
+                <div className={`p-6 rounded-[2.5rem] shadow-sm shrink-0 ${result.isPhishing ? 'bg-rose-200 text-rose-950 border border-rose-300' : 'bg-sky-200 text-sky-950 border border-sky-300'}`}>
                   {result.isPhishing ? <ShieldAlert size={56} /> : <ShieldCheck size={56} />}
                 </div>
                 <div className="flex-1 space-y-3">
                    <div className="flex flex-wrap gap-3">
-                      <span className={`px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${result.isPhishing ? 'bg-rose-200 border-rose-400 text-rose-950' : 'bg-emerald-200 border-emerald-400 text-emerald-950'}`}>
+                      <span className={`px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${result.isPhishing ? 'bg-rose-200 border-rose-400 text-rose-950' : 'bg-sky-200 border-sky-400 text-sky-950'}`}>
                         {result.isPhishing ? 'THREAT_DETECTED' : 'SECURE_DOMAIN'}
                       </span>
                       <span className="px-4 py-1 bg-[#ffffff] border border-[#e2ddd0] rounded-full text-[10px] font-black text-slate-900 uppercase tracking-widest">
@@ -186,7 +186,7 @@ const WebsiteVerifier: React.FC<WebsiteVerifierProps> = ({ onResult }) => {
                    <div className="space-y-3">
                       {result.technicalDiscrepancies.map((d, i) => (
                         <div key={i} className="flex items-start gap-4 p-4 bg-[#f0ece1] rounded-2xl border border-[#dcd7c8]">
-                           {result.isPhishing ? <AlertTriangle size={18} className="text-amber-800 shrink-0 mt-0.5" /> : <ShieldCheck size={18} className="text-emerald-800 shrink-0 mt-0.5" />}
+                           {result.isPhishing ? <AlertTriangle size={18} className="text-amber-800 shrink-0 mt-0.5" /> : <ShieldCheck size={18} className="text-sky-800 shrink-0 mt-0.5" />}
                            <span className="text-sm text-slate-950 font-extrabold italic leading-relaxed">{d}</span>
                         </div>
                       ))}
@@ -203,7 +203,7 @@ const WebsiteVerifier: React.FC<WebsiteVerifierProps> = ({ onResult }) => {
                     </div>
                     <div className="bg-[#ffffff] p-6 rounded-[2rem] border border-[#e2ddd0] text-center space-y-1">
                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Brand Sync</p>
-                       <p className={`text-xl font-black uppercase italic ${result.isSpoofed ? 'text-rose-800' : 'text-emerald-800'}`}>
+                       <p className={`text-xl font-black uppercase italic ${result.isSpoofed ? 'text-rose-800' : 'text-sky-800'}`}>
                          {result.isSpoofed ? 'Spoofed' : 'Verified'}
                        </p>
                     </div>

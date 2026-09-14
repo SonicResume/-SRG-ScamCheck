@@ -15,12 +15,12 @@ interface ProfileProps {
 }
 
 const PRESET_AVATARS = [
-  { id: '1', label: 'Specialist 1', url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80' },
-  { id: '2', label: 'Specialist 2', url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=256&q=80' },
-  { id: '3', label: 'Analyst 1', url: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=256&q=80' },
-  { id: '4', label: 'Analyst 2', url: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=256&q=80' },
-  { id: '5', label: 'Strategist', url: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=256&q=80' },
-  { id: '6', label: 'Cyber Art', url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=256&q=80' },
+  { id: '1', label: 'My Avatar', url: '/avatar.png' },
+  { id: '2', label: 'Analyst', url: '/avatar-analyst.png' },
+  { id: '3', label: 'Cyber', url: '/avatar-cyber.png' },
+  { id: '4', label: 'Forensics', url: '/avatar-forensics.png' },
+  { id: '5', label: 'Investigator', url: '/avatar-investigator.png' },
+  { id: '6', label: 'Security', url: '/avatar-security.png' },
 ];
 
 const Profile: React.FC<ProfileProps> = ({ 
@@ -32,14 +32,14 @@ const Profile: React.FC<ProfileProps> = ({
 
   const [isEditingAvatar, setIsEditingAvatar] = useState(false);
   const [selectedAvatar, setSelectedAvatar] = useState(
-    user?.avatar || PRESET_AVATARS[0].url
+    user?.avatar || '/avatar.png'
   );
   const [customName, setCustomName] = useState(user?.name || "");
   const [customUrl, setCustomUrl] = useState("");
   const [isSavedNotice, setIsSavedNotice] = useState(false);
 
   const currentAvatar =
-  selectedAvatar || user?.avatar || PRESET_AVATARS[0].url;
+  selectedAvatar || user?.avatar || '/avatar.png';
 
   const handleAvatarSelect = (url: string) => {
     setSelectedAvatar(url);

@@ -5,7 +5,7 @@ import {
   ArrowRight,
   Loader2,
   Download,
-  Landmark
+  UserSearch,
 } from 'lucide-react';
 import { checkUPI } from '../services/geminiService';
 import { UPIAnalysisResult } from '../types';
@@ -172,7 +172,7 @@ const UPIChecker: React.FC<UPICheckerProps> = ({
       <div className="bg-gradient-to-br from-[#ffffff] via-[#faf7f0] to-[#f4f0e6] border border-[#e2ddd0] p-8 md:p-10 rounded-3xl text-center space-y-6 relative overflow-hidden shadow-xs">
 
         <div className="w-16 h-16 bg-[#f0ece1] rounded-2xl flex items-center justify-center mx-auto border border-[#dcd7c8] text-indigo-900 shadow-2xs">
-          <Landmark size={32} />
+          <ScanSearch size={32} />
         </div>
 
         <div>
@@ -228,7 +228,7 @@ const UPIChecker: React.FC<UPICheckerProps> = ({
             className={`px-6 py-4 flex items-center justify-between border-b ${
               result.isSuspicious
                 ? 'bg-rose-100/90 border-rose-300'
-                : 'bg-emerald-100/90 border-emerald-300'
+                : 'bg-sky-100/90 border-sky-300'
             }`}
           >
 
@@ -237,14 +237,14 @@ const UPIChecker: React.FC<UPICheckerProps> = ({
               {result.isSuspicious ? (
                 <ShieldX className="text-rose-800" />
               ) : (
-                <ShieldCheck className="text-emerald-800" />
+                <ShieldCheck className="text-sky-800" />
               )}
 
               <span
                 className={`font-black uppercase tracking-wider text-xs ${
                   result.isSuspicious
                     ? 'text-rose-950'
-                    : 'text-emerald-950'
+                    : 'text-sky-950'
                 }`}
               >
                 {result.isSuspicious
@@ -283,7 +283,7 @@ const UPIChecker: React.FC<UPICheckerProps> = ({
                           ? 'text-amber-800'
                           : result.threatLevel === 'Medium'
                             ? 'text-indigo-900'
-                            : 'text-emerald-800'
+                            : 'text-sky-800'
                     }`}
                   >
                     {result.threatLevel}

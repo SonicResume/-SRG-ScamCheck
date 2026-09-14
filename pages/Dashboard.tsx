@@ -456,8 +456,8 @@ const Dashboard: React.FC<DashboardProps> = ({ auditCount, onAddNotification }) 
           </div>
         </div>
 
-        <div className="bg-white border border-[#dcd7c8] p-4 rounded-2xl shadow-xs hover:border-emerald-300 transition-colors flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-emerald-100 border border-emerald-200 text-emerald-800 flex items-center justify-center shrink-0">
+        <div className="bg-white border border-[#dcd7c8] p-4 rounded-2xl shadow-xs hover:border-sky-300 transition-colors flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-sky-100 border border-sky-200 text-sky-800 flex items-center justify-center shrink-0">
             <CheckCircle2 size={20} />
           </div>
           <div>
@@ -466,7 +466,7 @@ const Dashboard: React.FC<DashboardProps> = ({ auditCount, onAddNotification }) 
               <span className="text-xl font-black text-slate-950 italic">
                 {alerts.reduce((sum, a) => sum + (a.upvotes || 1), 0)}
               </span>
-              <span className="text-[9px] font-bold text-emerald-800">Verified Votes</span>
+              <span className="text-[9px] font-bold text-sky-800">Verified Votes</span>
             </div>
           </div>
         </div>
@@ -488,8 +488,8 @@ const Dashboard: React.FC<DashboardProps> = ({ auditCount, onAddNotification }) 
                     <p className="text-xs text-slate-700 font-extrabold mt-1">Live map of reported scam activity by neighborhood</p>
                  </div>
               </div>
-              <span className="px-3 py-1 bg-emerald-100 text-emerald-950 border border-emerald-300 rounded-full text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 shadow-2xs">
-                 <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span> LIVE AREA BROADCAST
+              <span className="px-3 py-1 bg-sky-100 text-sky-950 border border-sky-300 rounded-full text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 shadow-2xs">
+                 <span className="w-2 h-2 rounded-full bg-sky-600 animate-pulse"></span> LIVE AREA BROADCAST
               </span>
            </div>
 
@@ -553,7 +553,7 @@ const Dashboard: React.FC<DashboardProps> = ({ auditCount, onAddNotification }) 
               <div className="bg-slate-950 text-slate-200 p-2.5 rounded-xl text-[10px] font-mono font-bold space-y-1 overflow-hidden border border-slate-800 shadow-inner">
                 <div className="text-[8px] text-indigo-400 font-black uppercase tracking-widest border-b border-slate-800 pb-1 mb-1 flex items-center justify-between">
                   <span>👤 USER-REPORTED ALERTS</span>
-                  <span className="text-emerald-400 animate-pulse">● VERIFIED IN REAL TIME</span>
+                  <span className="text-sky-400 animate-pulse">● VERIFIED IN REAL TIME</span>
                 </div>
                 {alerts.length > 0 ? (
                   alerts.slice(0, 3).map((a, idx) => (
