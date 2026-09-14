@@ -352,7 +352,7 @@ const Landing = ({ onStart, onLogin }: LandingProps) => {
 
             <div className="mt-14 grid gap-5 md:grid-cols-3">
               {[
-                [ScanSearch, "Catch the little things", "Tiny wording changes, strange links, fake urgency and unusual payment requests can tell a much bigger story."],
+                [ScanSearch, "Catch the little things", "Small wording changes, unfamiliar links, pressure tactics and unexpected payment requests can reveal important warning signs."],
                 [CircleHelp, "Make the confusing clearer", "Turn a wall of suspicious details into a simple picture of what deserves your attention."],
                 [CheckCircle2, "Think before you act", "The goal isn't to scare you. It's to give you enough information to make a better decision."],
               ].map(([Icon, title, text]) => (
@@ -377,15 +377,15 @@ const Landing = ({ onStart, onLogin }: LandingProps) => {
               <div>
                 <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.25em] text-[#d8c1eb]">
                   <ShieldAlert size={13} />
-                  The scammer's favorite trick
+                  A scammer's pressure tactic
                 </div>
                 <h2 className="mt-5 text-4xl font-black tracking-[-0.04em] sm:text-5xl">
                   Make you panic
                   <span className="block text-[#c9a9e6]">before you think.</span>
                 </h2>
                 <p className="mt-5 max-w-xl text-sm font-medium leading-6 text-white/60">
-                  “Your account is locked.”<br />
-                  “Your payment failed.”<br />
+                  “Unusual activity was detected on your account.”<br />
+                  “Your recent transfer requires confirmation.”<br />
                   “Your job offer expires today.”<br />
                   “Send the money now.”
                 </p>
@@ -410,7 +410,7 @@ const Landing = ({ onStart, onLogin }: LandingProps) => {
                     </div>
                   </div>
                   <div className="mt-5 text-2xl font-black">$1,250</div>
-                  <div className="mt-2 text-xs text-white/50">Verification payment required immediately.</div>
+                  <div className="mt-2 text-xs text-white/50">Complete verification before access is restricted.</div>
                   <div className="mt-5 rounded-xl bg-[#a34e68]/20 px-3 py-2 text-[10px] font-black text-[#e9b6c6]">
                     ⚠ Pressure + money request
                   </div>

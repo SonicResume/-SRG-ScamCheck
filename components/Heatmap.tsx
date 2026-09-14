@@ -3,12 +3,12 @@ import { Target, Activity, Users } from 'lucide-react';
 import { HeatmapHotspot } from '../types';
 
 const hotspots: HeatmapHotspot[] = [
-  { id: '1', name: 'JNTU Cluster', scamCount: 42, recentType: 'Lottery Phishing', coordinates: { x: 30, y: 35 } },
-  { id: '2', name: 'Ameerpet Hub', scamCount: 89, recentType: 'Job Portal Scam', coordinates: { x: 55, y: 52 } },
-  { id: '3', name: 'Hitech City', scamCount: 24, recentType: 'UPI Spoofing', coordinates: { x: 22, y: 58 } },
-  { id: '4', name: 'Secunderabad', scamCount: 15, recentType: 'Bank Impersonation', coordinates: { x: 75, y: 40 } },
-  { id: '5', name: 'Gachibowli', scamCount: 31, recentType: 'Crypto Fraud', coordinates: { x: 18, y: 75 } },
-  { id: '6', name: 'Kukatpally', scamCount: 56, recentType: 'OTP Hijack Cluster', coordinates: { x: 42, y: 28 } },
+  { id: '1', name: 'Downtown Toronto', scamCount: 42, recentType: 'Prize Message Scam', coordinates: { x: 30, y: 35 } },
+  { id: '2', name: 'North York', scamCount: 89, recentType: 'Employment Message Scam', coordinates: { x: 55, y: 52 } },
+  { id: '3', name: 'Scarborough', scamCount: 24, recentType: 'Payment Identifier Scam', coordinates: { x: 22, y: 58 } },
+  { id: '4', name: 'Etobicoke', scamCount: 15, recentType: 'Bank Impersonation Attempt', coordinates: { x: 75, y: 40 } },
+  { id: '5', name: 'Mississauga', scamCount: 31, recentType: 'Investment Scam', coordinates: { x: 18, y: 75 } },
+  { id: '6', name: 'Markham', scamCount: 56, recentType: 'Verification Code Scam', coordinates: { x: 42, y: 28 } },
 ];
 
 const Heatmap: React.FC = () => {
