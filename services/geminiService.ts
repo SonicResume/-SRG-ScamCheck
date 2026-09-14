@@ -1,12 +1,4 @@
-const OLLAMA_BASE =
-  import.meta.env.VITE_OLLAMA_API_URL ||
-  "https://api.justiceoncall.ca";
-
-const OLLAMA_MODEL =
-  import.meta.env.VITE_OLLAMA_MODEL ||
-  "theo:latest";
-
-type OllamaResponse = {
+type AIResponse = {
   response?: string;
   message?: {
     content?: string;
@@ -47,10 +39,10 @@ export type ImageScamAnalysis = {
   educationalInsight: string;
 };
 
-async function askOllama(
+async function askAI(
   prompt: string,
   images: string[] = [],
-  model: string = OLLAMA_MODEL
+  model?: string
 ): Promise<string> {
   const endpoint =
     "https://srg-scam-check-backend.onrender.com/api/ai";
@@ -61,7 +53,7 @@ async function askOllama(
       image.replace(/^data:image\/[^;]+;base64,/i, "")
     );
 
-  console.log("OLLAMA REQUEST", {
+  console.log("AI REQUEST", {
     endpoint,
     hasImages: cleanImages.length > 0,
     imageCount: cleanImages.length,
@@ -86,20 +78,17 @@ async function askOllama(
       }),
     });
   } catch (error) {
-    console.error("OLLAMA NETWORK ERROR:", error);
+    console.error("AI NETWORK ERROR:", error);
     throw new Error(
-      "Unable to connect to the Ollama analysis server."
+      "Unable to connect to the analysis server."
     );
   }
 
   const rawBody = await response.text();
 
-  console.log("OLLAMA HTTP STATUS:", response.status);
-
   if (!response.ok) {
-    console.error("OLLAMA ERROR BODY:", rawBody);
     throw new Error(
-      `Ollama API error ${response.status}: ${
+      `AI service error ${response.status}: ${
         rawBody || "empty response"
       }`
     );
@@ -107,21 +96,21 @@ async function askOllama(
 
   if (!rawBody.trim()) {
     throw new Error(
-      `Ollama returned an empty response for model "${model}".`
+      `AI service returned an empty response for model "${model}".`
     );
   }
 
-  let data: OllamaResponse;
+  let data: AIResponse;
 
   try {
     data = JSON.parse(rawBody);
   } catch {
     console.error(
-      "OLLAMA INVALID API RESPONSE:",
+      "AI INVALID API RESPONSE:",
       rawBody
     );
     throw new Error(
-      "Ollama returned an invalid API response."
+      "AI service returned an invalid API response."
     );
   }
 
@@ -132,16 +121,16 @@ async function askOllama(
 
   if (!content) {
     console.error(
-      "OLLAMA RESPONSE CONTAINED NO CONTENT:",
+      "AI RESPONSE CONTAINED NO CONTENT:",
       data
     );
     throw new Error(
-      `Ollama returned no model content for "${model}".`
+      `AI service returned no model content for "${model}".`
     );
   }
 
   console.log(
-    "OLLAMA RESPONSE LENGTH:",
+    "AI RESPONSE LENGTH:",
     content.length
   );
 
@@ -151,7 +140,7 @@ async function askOllama(
 function extractJson<T>(text: string): T {
   if (!text || !text.trim()) {
     throw new Error(
-      "Ollama returned empty model content."
+      "AI service returned empty model content."
     );
   }
 
@@ -175,7 +164,7 @@ function extractJson<T>(text: string): T {
     end <= start
   ) {
     throw new Error(
-      `Ollama returned invalid JSON: ${cleaned.slice(
+      `AI service returned invalid JSON: ${cleaned.slice(
         0,
         1000
       )}`
@@ -191,7 +180,7 @@ function extractJson<T>(text: string): T {
     return JSON.parse(jsonCandidate) as T;
   } catch {
     throw new Error(
-      `Ollama returned malformed JSON: ${jsonCandidate.slice(
+      `AI service returned malformed JSON: ${jsonCandidate.slice(
         0,
         1000
       )}`
@@ -270,7 +259,7 @@ export async function analyzeScamImage(
   }
 
   const visionModel =
-    import.meta.env.VITE_OLLAMA_VISION_MODEL ||
+    undefined ||
     "qwen3-vl:8b";
 
   const prompt = `
@@ -327,7 +316,7 @@ Rules:
 - Do not invent evidence.
 `;
 
-  const result = await askOllama(
+  const result = await askAI(
     prompt,
     [imageBase64],
     visionModel
@@ -423,7 +412,7 @@ export async function analyzeWebsiteURL(
     );
   }
 
-  const result = await askOllama(`
+  const result = await askAI(`
 You are SRG ScamCheck's website-forensics AI.
 
 Analyze this URL for:
@@ -530,7 +519,7 @@ export async function checkUPI(
     );
   }
 
-  const result = await askOllama(`
+  const result = await askAI(`
 You are SRG ScamCheck's payment-fraud analysis engine.
 
 Analyze this UPI/VPA/payment identifier for:
@@ -599,7 +588,7 @@ export async function auditVoiceResult(
     );
   }
 
-  const result = await askOllama(`
+  const result = await askAI(`
 You are SRG ScamCheck's voice-scam forensic analysis engine.
 
 Analyze the transcript for:
@@ -676,7 +665,7 @@ export async function verifyFirm(
     );
   }
 
-  const result = await askOllama(`
+  const result = await askAI(`
 You are SRG ScamCheck's employment-scam forensic engine.
 
 Analyze the supplied information for:
@@ -746,7 +735,7 @@ export async function generateVerificationEmail(
     );
   }
 
-  return askOllama(`
+  return askAI(`
 Write a professional verification email based ONLY on the
 following context.
 
