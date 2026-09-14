@@ -172,7 +172,7 @@ const UPIChecker: React.FC<UPICheckerProps> = ({
       <div className="bg-gradient-to-br from-[#ffffff] via-[#faf7f0] to-[#f4f0e6] border border-[#e2ddd0] p-8 md:p-10 rounded-3xl text-center space-y-6 relative overflow-hidden shadow-xs">
 
         <div className="w-16 h-16 bg-[#f0ece1] rounded-2xl flex items-center justify-center mx-auto border border-[#dcd7c8] text-indigo-900 shadow-2xs">
-          <ScanSearch size={32} />
+          <UserSearch size={32} />
         </div>
 
         <div>
