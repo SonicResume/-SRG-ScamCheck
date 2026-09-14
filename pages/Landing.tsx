@@ -377,15 +377,15 @@ const Landing = ({ onStart, onLogin }: LandingProps) => {
               <div>
                 <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.25em] text-[#d8c1eb]">
                   <ShieldAlert size={13} />
-                  A scammer's pressure tactic
+                  Common warning signs
                 </div>
                 <h2 className="mt-5 text-4xl font-black tracking-[-0.04em] sm:text-5xl">
                   Make you panic
                   <span className="block text-[#c9a9e6]">before you think.</span>
                 </h2>
                 <p className="mt-5 max-w-xl text-sm font-medium leading-6 text-white/60">
-                  “Unusual activity was detected on your account.”<br />
-                  “Your recent transfer requires confirmation.”<br />
+                  
+                  
                   “Your job offer expires today.”<br />
                   “Send the money now.”
                 </p>
@@ -405,12 +405,12 @@ const Landing = ({ onStart, onLogin }: LandingProps) => {
                       <Banknote size={18} />
                     </div>
                     <div>
-                      <div className="text-xs font-black">PAYMENT REQUEST</div>
+                      <div className="text-xs font-black">WARNING SIGN</div>
                       <div className="text-[9px] text-white/40">received moments ago</div>
                     </div>
                   </div>
                   <div className="mt-5 text-2xl font-black">$1,250</div>
-                  <div className="mt-2 text-xs text-white/50">Complete verification before access is restricted.</div>
+                  <div className="mt-2 text-xs text-white/50">Review the details carefully before taking action.</div>
                   <div className="mt-5 rounded-xl bg-[#a34e68]/20 px-3 py-2 text-[10px] font-black text-[#e9b6c6]">
                     ⚠ Pressure + money request
                   </div>
